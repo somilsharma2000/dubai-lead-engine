@@ -1,4 +1,4 @@
-# Master Service Catalog — everything we can sell (70 services)
+# Master Service Catalog — everything we can sell (92 services)
 The full list. Every category is a menu a client can order from.
 
 ## Video & Editing (12)
@@ -15,81 +15,108 @@ The full list. Every category is a menu a client can order from.
 11. Testimonial video edits
 12. Before/after renovation edits
 
-## Social Media Management (8)
+## Social Media Management (13)
 13. Full Instagram management
 14. TikTok management
 15. LinkedIn personal-brand management
 16. YouTube channel management
-17. Monthly content calendars
-18. Community management (comments + DMs)
-19. Daily stories, polls, countdowns
-20. Monthly analytics reports
+17. X (Twitter) management — threads, market hot-takes
+18. Quora presence — owning every "Dubai property" question
+19. Reddit engagement — expat & investor communities
+20. Pinterest listing boards
+21. Threads management
+22. Monthly content calendars (all platforms, one plan)
+23. Community management (comments + DMs, all platforms)
+24. Daily stories, polls, countdowns
+25. Monthly analytics reports
 
 ## CRM & Client Systems (8)
-21. CRM setup & migration
-22. Lead pipeline automation
-23. Appointment booking systems
-24. 30-day follow-up automations
-25. Missed-call text-back
-26. Lead scoring & routing
-27. Client database cleanup
-28. Money dashboards
+26. CRM setup & migration
+27. Lead pipeline automation
+28. Appointment booking systems
+29. 30-day follow-up automations
+30. Missed-call text-back
+31. Lead scoring & routing
+32. Client database cleanup
+33. Money dashboards
 
 ## Lead Capture (9)
-29. 24/7 WhatsApp AI bot
-30. AI voice agent
-31. Landing pages (48h)
-32. Lead funnels
-33. Lead magnets (area guides, checklists)
-34. Instant valuation pages
-35. Quiz funnels
-36. Website chat widgets
-37. Meta lead forms integration
+34. 24/7 WhatsApp AI bot
+35. AI voice agent
+36. Landing pages (48h)
+37. Lead funnels
+38. Lead magnets (area guides, checklists)
+39. Instant valuation pages
+40. Quiz funnels
+41. Website chat widgets
+42. Meta lead forms integration
 
 ## Trust & Reviews (5)
-38. Google review machine
-39. Review responses (multi-language)
-40. Google Business profile optimization
-41. Reputation monitoring
-42. Star-rating assets for ads
+43. Google review machine
+44. Review responses (multi-language)
+45. Google Business profile optimization
+46. Reputation monitoring
+47. Star-rating assets for ads
 
-## Ads (5)
-43. Meta (Instagram/Facebook) ads
-44. Google search ads
-45. YouTube ads
-46. Retargeting campaigns
-47. Landing page A/B tests
+## Ads (10)
+48. Meta (Instagram/Facebook) ads
+49. Google search ads
+50. YouTube ads
+51. TikTok ads
+52. LinkedIn ads (B2B: brokers, developers, investors)
+53. Snapchat ads (huge in Dubai/GCC)
+54. Quora ads (high-intent property questions)
+55. Reddit ads (expat communities)
+56. Retargeting campaigns across all platforms
+57. Landing page A/B tests
 
 ## Content & Brand (7)
-48. Brand kit (logo, colors, fonts)
-49. Copywriting (site, listings, ads)
-50. Monthly market-update reports
-51. Email newsletters
-52. Blog/SEO articles
-53. Photography AI enhancement
-54. Translation services
+58. Brand kit (logo, colors, fonts)
+59. Copywriting (site, listings, ads)
+60. Monthly market-update reports
+61. Email newsletters
+62. Blog/SEO articles
+63. Photography AI enhancement
+64. Translation services
 
 ## Community & Events (5)
-55. Open house promos
-56. Giveaway campaigns
-57. Investor webinars
-58. Referral program setup
-59. VIP client club management
+65. Open house promos
+66. Giveaway campaigns
+67. Investor webinars
+68. Referral program setup
+69. VIP client club management
+
+## Organic Lead Capture (8)
+70. Quora answer engine — daily answers to buyer questions, profile funnels to WhatsApp
+71. X threads & Spaces — market updates that pull DMs
+72. Reddit posts in expat/investor communities (no-spam style)
+73. Instagram SEO — keyword captions so clients get found in search
+74. Google Business posts & updates — ranking the profile itself
+75. SEO blog funnels — buying-in-Dubai articles that capture emails
+76. Facebook group engagement — expat buy/sell groups
+77. YouTube Shorts comment funnels
 
 ## Back-Office Automation (5)
-60. Database broadcast blasts
-61. Birthday/anniversary bots
-62. Auto payment reminders
-63. AI data entry & file organization
-64. SOP playbooks & staff training docs
+78. Database broadcast blasts
+79. Birthday/anniversary bots
+80. Auto payment reminders
+81. AI data entry & file organization
+82. SOP playbooks & staff training docs
 
-## Big-Ticket Packages (6)
-65. Developer launch campaigns
-66. Brokerage/team packages (multi-agent)
-67. On-location production days
-68. Recruitment funnels (agencies hiring agents)
-69. White-label (other agencies resell our OS)
-70. AI + social media training workshops
+## Big-Ticket Packages (10)
+83. Developer launch campaigns
+84. Brokerage/team packages (multi-agent)
+85. On-location production days
+86. Recruitment funnels (agencies hiring agents)
+87. White-label (other agencies resell our OS)
+88. AI + social media training workshops
+89. Multi-platform autopilot — post once, everywhere, forever
+90. Lead magnet funnels (guides, checklists, calculators)
+91. Organic + paid mix strategy per client
+92. Monthly attribution report — where every lead came from
 
 ## How to sell it
 Never show a client this whole list — decision paralysis. Sell the 6 systems on the website; the catalog is the menu WE upsell from, one category per month.
+
+## The organic autopilot (our unfair advantage)
+Paid ads need budgets. Organic is our free river of leads: we post FOR the client everywhere (Instagram, TikTok, X, Quora, Reddit, Pinterest), answer questions in their name, and funnel every interested person to their WhatsApp bot. One content engine, 9 platforms, zero extra client effort.
