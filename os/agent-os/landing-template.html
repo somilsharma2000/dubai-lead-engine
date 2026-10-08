@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080d;--panel:#10101a;--gold:#d4af37;--gold2:#e8c96a;--text:#f5f2ea;--muted:#a09da8;--line:rgba(212,175,55,.22)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.65}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+.serif{font-family:'Playfair Display',serif}
+.btn{display:inline-block;padding:14px 30px;border-radius:10px;font-weight:600;text-decoration:none;transition:.25s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f}
+.btn-gold:hover{transform:translateY(-2px)}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:600}
+/* hero */
+.hero{padding:120px 0 70px;background:radial-gradient(ellipse 60% 45% at 50% -5%,rgba(212,175,55,.13),transparent 60%);display:flex;gap:50px;align-items:center}
+.hero .left{flex:1}
+.hero .right{width:300px;text-align:center}
+.avatar{width:240px;height:240px;border-radius:50%;border:3px solid var(--gold);object-fit:cover;margin:0 auto;display:block;background:var(--panel)}
+.stats{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--muted)}
+.stat b{display:block;color:var(--gold2);font-size:20px;font-family:'Playfair Display',serif}
+/* listings */
+section{padding:64px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.prop{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;transition:.25s}
+.prop:hover{border-color:var(--line);transform:translateY(-3px)}
+.prop .img{height:170px;background:var(--panel2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
+.prop img{width:100%;height:100%;object-fit:cover}
+.prop .b{padding:16px}
+.prop h3{font-size:15.5px;font-weight:600}
+.prop .area{color:var(--muted);font-size:13px}
+.prop .price{color:var(--gold2);font-weight:700;margin-top:6px}
+/* reviews */
+.review{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:22px;margin-top:16px}
+.review p{font-size:14.5px;color:#d8d4cc;font-style:italic}
+.review .who{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.stars{color:var(--gold);letter-spacing:2px}
+/* cta */
+.cta{text-align:center;background:radial-gradient(ellipse 55% 60% at 50% 110%,rgba(212,175,55,.12),transparent 65%)}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);font-weight:600}
+@media(max-width:800px){.hero{flex-direction:column-reverse;text-align:center}.stats{justify-content:center}.grid{grid-template-columns:1fr}}
+footer{padding:30px;text-align:center;color:var(--muted);font-size:12.5px;border-top:1px solid rgba(255,255,255,.06)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="left">
+    <span class="eyebrow" id="eyebrow"></span>
+    <h1 class="serif" id="agentName" style="font-size:clamp(32px,5vw,52px);font-weight:700;line-height:1.15"></h1>
+    <p id="tagline" style="color:var(--muted);font-size:17px;margin-top:14px;max-width:520px"></p>
+    <div style="margin-top:28px"><a class="btn btn-gold" id="waBtn" target="_blank" rel="noopener">WhatsApp me now</a></div>
+    <div class="stats" id="stats"></div>
+  </div>
+  <div class="right"><img class="avatar" id="avatar" alt="Agent photo"></div>
+</header>
+
+<section>
+  <span class="eyebrow">Featured listings</span>
+  <h2 class="serif" style="font-size:clamp(24px,3.5vw,34px)">Hand-picked right now</h2>
+  <div class="grid" id="listings"></div>
+</section>
+
+<section style="background:var(--panel);border-radius:16px">
+  <span class="eyebrow">Client love</span>
+  <h2 class="serif" style="font-size:clamp(24px,3.5vw,34px)"><span class="stars">★★★★★</span> <span id="reviewCount"></span></h2>
+  <div id="reviews"></div>
+</section>
+
+<section class="cta">
+  <span class="eyebrow">Free consultation</span>
+  <h2></h2>
+  <p style="color:var(--muted);max-width:520px;margin:14px auto 26px">Message any hour — I reply fast, and my AI assistant answers instantly when I'm mid-viewing.</p>
+  <a class="btn btn-gold" id="waBtn2" target="_blank" rel="noopener">Start on WhatsApp</a>
+</section>
+</div>
+<footer id="footer"></footer>
+
+<script>
+/* ====== CONFIG BLOCK — fill this, site is done. That's the whole product. ====== */
+const CONFIG = {
+  agentName: "Rahul Manuja",
+  eyebrowText: "Dubai real estate",
+  tagline: "212 listings sold. I help buyers and investors find the right Dubai property — and answer every inquiry within minutes, day or night.",
+  photo: "agent-photo.jpg",              // drop photo next to this file
+  whatsapp: "971500000000",              // client's WhatsApp, country code + digits
+  waGreeting: "Hi! I saw your page — I'm interested in Dubai property.",
+  stats: [ ["212+","Properties sold"], ["10 yrs","In Dubai"], ["4.9★","Google rating"] ],
+  listings: [
+    { title:"Marina Skyline 2BR", area:"Dubai Marina", price:"1.45M AED", img:"listing1.jpg" },
+    { title:"Palm Garden Villa", area:"Palm Jumeirah", price:"5.8M AED", img:"listing2.jpg" },
+    { title:"Creek Views 1BR", area:"Business Bay", price:"980K AED", img:"listing3.jpg" },
+  ],
+  reviewCount: "What clients say",
+  reviews: [
+    { text:"“Found us our villa in two weeks after three other agents failed. Replies instantly, zero pressure.”", who:"— Priya S., Arabian Ranches" },
+    { text:"“The midnight messages got answered. That alone is why we went with him.”", who:"— Daniel K., investor, London" },
+  ],
+  footerText: "© 2026 — All rights reserved."
+};
+/* ====== engine: do not edit below ====== */
+document.title = CONFIG.agentName + " — Dubai Real Estate";
+document.getElementById('eyebrow').textContent = CONFIG.eyebrowText;
+document.getElementById('agentName').textContent = CONFIG.agentName;
+document.getElementById('tagline').textContent = CONFIG.tagline;
+document.getElementById('avatar').src = CONFIG.photo;
+const wa = "https://wa.me/"+CONFIG.whatsapp+"?text="+encodeURIComponent(CONFIG.waGreeting);
+document.getElementById('waBtn').href = wa;
+document.getElementById('waBtn2').href = wa;
+document.getElementById('reviewCount').textContent = CONFIG.reviewCount;
+document.getElementById('stats').innerHTML = CONFIG.stats.map(s=>'<div class="stat"><b>'+s[0]+'</b>'+s[1]+'</div>').join('');
+document.getElementById('listings').innerHTML = CONFIG.listings.map(l=>'<div class="prop"><div class="img">'+(l.img?'<img src="'+l.img+'" alt="'+l.title+'">':'photo')+'</div><div class="b"><h3>'+l.title+'</h3><div class="area">'+l.area+'</div><div class="price">'+l.price+'</div></div></div>').join('');
+document.getElementById('reviews').innerHTML = CONFIG.reviews.map(r=>'<div class="review"><p>'+r.text+'</p><div class="who">'+r.who+'</div></div>').join('');
+document.querySelector('.cta h2').textContent = "Ready when you are.";
+document.getElementById('footer').textContent = CONFIG.agentName + " · " + CONFIG.footerText;
+</script>
+</body>
+</html>
