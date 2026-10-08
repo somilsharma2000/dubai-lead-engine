@@ -13,6 +13,7 @@ Dubai agents lose up to 70% of their leads because they reply too slow. We answe
 - `03-dm-scripts/scripts.md` — DMs, follow-ups, objection answers, price pitch
 - `04-content/templates.md` — reel concepts, hooks, captions, monthly calendar
 - `05-playbook/daily-routine.md` — the daily drill (5 DMs/day minimum)
+- `os/` — Agent OS: the build-once product system (config sheet, bot blueprint, landing template, content pipeline)
 
 ## Packages
 | Plan | Price | Includes |
