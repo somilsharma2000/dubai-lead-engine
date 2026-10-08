@@ -99,13 +99,16 @@ form .btn{grid-column:1/-1;justify-content:center;text-align:center}
 .wa-direct a{color:var(--gold2)}
 footer{border-top:1px solid rgba(255,255,255,.06);padding:34px 0;color:var(--muted);font-size:13px;text-align:center}
 .gold{color:var(--gold2)}
+.ars-card ul{list-style:none;margin-top:12px}
+.ars-card li{font-size:13px;color:var(--muted);padding:4px 0;line-height:1.5}
+.ars-card li::before{content:"✦";color:var(--gold);font-size:9px;margin-right:9px}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
 .reveal.on{opacity:1;transform:none}
 </style>
 </head>
 <body>
 <nav><div class="nav-in"><a class="logo" href="#top">LEAD<span>ENGINE</span></a>
-<div class="nav-links"><a href="#services">Services</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="btn btn-gold" style="padding:10px 22px" href="#contact">Book a free call</a></div></div></nav>
+<div class="nav-links"><a href="#services">Services</a><a href="#arsenal">Full list</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="btn btn-gold" style="padding:10px 22px" href="#contact">Book a free call</a></div></div></nav>
 
 <header class="hero" id="top">
 <div class="wrap">
@@ -129,8 +132,15 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:34px 0;color:var(--mut
 <div class="card"><div class="num">05</div><h3>Landing pages</h3><p>Your own fast one-page site: listings, reviews, WhatsApp button, instant booking. Delivered in days, not months.</p><span class="tag">48-hour build</span></div>
 <div class="card"><div class="num">06</div><h3>Ads that chase deals</h3><p>Meta and Google campaigns targeting buyers and sellers, reported monthly in dirhams — viewings booked, not likes.</p><span class="tag">Scale-up</span></div>
 </div>
-<p class="arsenal-note">Plus <b>43 more services</b> in the full arsenal: virtual staging, database broadcasts, referral machines, investor webinars, market-update videos, seller funnels and more — stacked on as you grow.</p>
+<p class="arsenal-note">That's the machine. Below is the <b>full arsenal — all 70 services</b> — stacked on month by month as you grow.</p>
 </div></section>
+
+<section id="arsenal" style="background:var(--panel);padding-top:70px">
+<div class="wrap">
+<div style="text-align:center"><span class="eyebrow">The full arsenal</span><h2 style="font-size:clamp(28px,4vw,40px);font-weight:600">70 services. One machine. One invoice.</h2><p style="color:var(--muted);max-width:600px;margin:14px auto 0">Video, social media, CRM, lead capture, reviews, ads, content, events, back-office automation — everything a Dubai agent needs, under one roof.</p></div>
+<div class="grid3 reveal" id="arsGrid"></div>
+</div>
+</section>
 
 <section id="how" style="background:var(--panel)"><div class="wrap">
 <div style="text-align:center"><span class="eyebrow">Zero risk</span><h2 style="font-size:clamp(30px,4.5vw,44px);font-weight:600">You see the work before you pay a dirham.</h2></div>
@@ -217,6 +227,21 @@ fetch('https://superagent-991ef10e.base44.app/functions/captureWebsiteLead', {
   btn.disabled = false; btn.textContent = 'Get my free sample plan';
 });
 });
+var ARSENAL = [
+ ["Video & Editing", ["Listing reels from your clips","Cinematic property tours","Drone footage editing","YouTube Shorts & TikTok edits","Long-form / podcast editing","UGC-style video ads","Subtitles in 5 languages","AI avatar presenter videos","Virtual staging videos","Thumbnail design","Testimonial video edits","Before/after renovation edits"]],
+ ["Social Media Management", ["Full Instagram management","TikTok management","LinkedIn personal brand","YouTube channel management","Monthly content calendars","Community management (DMs & comments)","Daily stories, polls, countdowns","Monthly analytics reports"]],
+ ["CRM & Client Systems", ["CRM setup & migration","Lead pipeline automation","Appointment booking systems","30-day follow-up automations","Missed-call text-back","Lead scoring & routing","Client database cleanup","Money dashboards"]],
+ ["Lead Capture", ["24/7 WhatsApp AI bot","AI voice agent","Landing pages in 48 hours","Lead funnels","Lead magnets (area guides)","Instant valuation pages","Quiz funnels","Website chat widgets","Meta lead-form integration"]],
+ ["Trust & Reviews", ["Google review machine","Review responses, multi-language","Google Business optimization","Reputation monitoring","Star-rating assets for ads"]],
+ ["Ads", ["Meta (Instagram & Facebook) ads","Google search ads","YouTube ads","Retargeting campaigns","Landing page A/B tests"]],
+ ["Content & Brand", ["Brand kit (logo, colors, fonts)","Copywriting for site, listings, ads","Monthly market-update reports","Email newsletters","Blog & SEO articles","Photography AI enhancement","Translation services"]],
+ ["Community & Events", ["Open house promos","Giveaway campaigns","Investor webinars","Referral program setup","VIP client club management"]],
+ ["Back-Office Automation", ["Database broadcast blasts","Birthday & anniversary bots","Auto payment reminders","AI data entry & file organization","SOP playbooks & staff training docs"]],
+ ["Big-Ticket Packages", ["Developer launch campaigns","Brokerage & team packages","On-location production days","Recruitment funnels for agencies","White-label for other agencies","AI & social media workshops"]]
+];
+document.getElementById('arsGrid').innerHTML = ARSENAL.map(function(c){
+ return '<div class="card ars-card"><div class="num">'+c[0]+'</div><ul>'+c[1].map(function(i){return '<li>'+i+'</li>'}).join('')+'</ul></div>';
+}).join('');
 var obs = new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on')}})},{threshold:.12});
 document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
 </script>
