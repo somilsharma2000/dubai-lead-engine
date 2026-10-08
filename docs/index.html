@@ -113,7 +113,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:34px 0;color:var(--mut
 <h1>Every inquiry answered in seconds. <em>Even at 3 AM.</em></h1>
 <p>Dubai agents lose up to 70% of their leads to slow replies. We build your lead-catching machine: a 24/7 WhatsApp AI that books viewings while you sleep, content that makes you the agent people trust, and a review engine that ranks you first.</p>
 <div class="hero-cta"><a class="btn btn-gold" href="#contact">Book a free strategy call</a><a class="btn btn-ghost" href="#services">See what we build</a></div>
-<div class="chips"><span class="chip"><b>70%</b> of lost leads rescued</span><span class="chip"><b>48h</b> first deliverable</span><span class="chip"><b>24/7</b> AI assistant</span><span class="chip"><b>49</b> services in the arsenal</span></div>
+<div class="chips"><span class="chip"><b>70%</b> of leads agents lose to slow replies</span><span class="chip"><b>48h</b> first deliverable</span><span class="chip"><b>24/7</b> AI assistant</span><span class="chip"><b>49</b> services in the arsenal</span></div>
 </div>
 </header>
 
@@ -176,22 +176,46 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:34px 0;color:var(--mut
 <div class="full"><label for="f-wa">WhatsApp number</label><input id="f-wa" required placeholder="+971 ..."></div>
 <div class="full"><label for="f-need">What do you need most?</label>
 <select id="f-need"><option>24/7 WhatsApp AI bot</option><option>Content & reels</option><option>Everything (Lead Machine)</option><option>Not sure yet — advise me</option></select></div>
-<button class="btn btn-gold" type="submit">Get my free sample plan</button>
+<button class="btn btn-gold" type="submit" id="submitBtn">Get my free sample plan</button>
+<p id="formMsg" style="display:none;grid-column:1/-1;text-align:center;font-size:14.5px"></p>
 </form>
-<p class="wa-direct">Prefer to talk now? <a href="https://wa.me/910000000000?text=Hi%20Lead%20Engine%2C%20I%27m%20a%20Dubai%20agent%20and%20I%20want%20the%20free%20sample%20plan." target="_blank" rel="noopener">Message us on WhatsApp</a></p>
 </div></section>
 
 <footer><div class="wrap">Lead Engine Agency — AI growth partner for Dubai real estate. Built to make you the agent buyers find first.</div></footer>
 
 <script>
-// REPLACE 910000000000 below with your real WhatsApp number (country code, digits only)
-var WA_NUMBER = "910000000000";
 document.querySelectorAll('.q').forEach(function(q){q.addEventListener('click',function(){q.classList.toggle('open')})});
-document.querySelectorAll('.wa-direct a').forEach(function(a){a.href="https://wa.me/"+WA_NUMBER+"?text=Hi%20Lead%20Engine%2C%20I%27m%20a%20Dubai%20agent%20and%20I%20want%20the%20free%20sample%20plan."});
 document.getElementById('leadForm').addEventListener('submit',function(e){
 e.preventDefault();
-var msg = "Hi Lead Engine! I want the free sample plan.%0A%0AName: "+encodeURIComponent(document.getElementById('f-name').value)+"%0AAgency: "+encodeURIComponent(document.getElementById('f-agency').value||"—")+"%0AWhatsApp: "+encodeURIComponent(document.getElementById('f-wa').value)+"%0ANeed: "+encodeURIComponent(document.getElementById('f-need').value);
-window.open("https://wa.me/"+WA_NUMBER+"?text="+msg,"_blank");
+var btn = document.getElementById('submitBtn');
+btn.disabled = true; btn.textContent = 'Sending...';
+fetch('https://superagent-991ef10e.base44.app/functions/captureWebsiteLead', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: document.getElementById('f-name').value,
+    agency: document.getElementById('f-agency').value,
+    whatsapp: document.getElementById('f-wa').value,
+    need: document.getElementById('f-need').value
+  })
+}).then(function(r){ return r.json(); }).then(function(d){
+  var msg = document.getElementById('formMsg');
+  msg.style.display = 'block';
+  if (d.ok) {
+    msg.style.color = 'var(--gold2)';
+    msg.textContent = '✓ Received. We will message you on WhatsApp within a few hours with your free sample plan.';
+    document.getElementById('leadForm').reset();
+  } else {
+    msg.style.color = '#ff6b6b';
+    msg.textContent = d.error || 'Something went wrong. Please try again.';
+  }
+  btn.disabled = false; btn.textContent = 'Get my free sample plan';
+}).catch(function(){
+  var msg = document.getElementById('formMsg');
+  msg.style.display = 'block'; msg.style.color = '#ff6b6b';
+  msg.textContent = 'Network error. Please check your connection and try again.';
+  btn.disabled = false; btn.textContent = 'Get my free sample plan';
+});
 });
 var obs = new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on')}})},{threshold:.12});
 document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
