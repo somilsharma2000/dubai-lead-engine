@@ -1,4 +1,4 @@
-# Master Service Catalog — everything we can sell (92 services)
+# Master Service Catalog — everything we can sell (100 services — complete online presence)
 The full list. Every category is a menu a client can order from.
 
 ## Video & Editing (12)
@@ -115,8 +115,21 @@ The full list. Every category is a menu a client can order from.
 91. Organic + paid mix strategy per client
 92. Monthly attribution report — where every lead came from
 
+## Audience Targeting & Data (8)
+93. Geo-targeting down to buildings & communities (Downtown, Marina, Palm…)
+94. Buyer-nationality targeting (Russian, Indian, UK, GCC investor segments)
+95. Lookalike audiences from a client's past-client list
+96. Retargeting pools — everyone who visited, watched, DM'd
+97. Competitor audience conquesting
+98. Income & lifestyle segments (HNW, first-home, investor)
+99. Warm audience building for future launches
+100. Pixel & conversion tracking setup — know exactly which dirham came from where
+
 ## How to sell it
 Never show a client this whole list — decision paralysis. Sell the 6 systems on the website; the catalog is the menu WE upsell from, one category per month.
+
+## Positioning
+We don't sell "marketing." We handle a business's COMPLETE online presence: every platform, every ad channel, every question a buyer asks anywhere on the internet — one team, one invoice. Target niche today is Dubai real estate; the same OS relaunches for gyms, clinics, restaurants.
 
 ## The organic autopilot (our unfair advantage)
 Paid ads need budgets. Organic is our free river of leads: we post FOR the client everywhere (Instagram, TikTok, X, Quora, Reddit, Pinterest), answer questions in their name, and funnel every interested person to their WhatsApp bot. One content engine, 9 platforms, zero extra client effort.
