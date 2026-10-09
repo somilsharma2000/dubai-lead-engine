@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  name          String
+  passwordHash  String
+  isPlatformAdmin Boolean     @default(false)
+  createdAt     DateTime     @default(now())
+  memberships   Membership[]
+  sessions      Session[]
+}
+
+model Organization {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  country    String   @default("AE")
+  currency   String   @default("USD")
+  pkg        String   @default("TRIAL")
+  status     String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  memberships Membership[]
+  leads      Lead[]
+  tasks      Task[]
+  properties Property[]
+  appointments Appointment[]
+  workflows  Workflow[]
+  activities Activity[]
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  orgId     String
+  role      String   @default("AGENCY_MEMBER")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@unique([userId, orgId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id            String    @id @default(cuid())
+  orgId         String
+  name          String
+  phone         String?
+  email         String?
+  source        String    @default("MANUAL")
+  city          String?
+  country       String?
+  intent        String    @default("BUY")
+  propertyType  String?
+  budgetMin     Float?
+  budgetMax     Float?
+  stage         String    @default("NEW")
+  score         Int       @default(0)
+  consent       String    @default("UNKNOWN")
+  ownerId       String?
+  lastActivityAt DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  archivedAt    DateTime?
+  org           Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  notes         Note[]
+  tasks         Task[]
+  appointments  Appointment[]
+  @@index([orgId, stage])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  leadId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  orgId     String
+  leadId    String?
+  assigneeId String?
+  title     String
+  kind      String    @default("FOLLOWUP")
+  dueAt     DateTime
+  status    String    @default("OPEN")
+  createdAt DateTime  @default(now())
+  doneAt    DateTime?
+  lead      Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@index([orgId, status, dueAt])
+}
+
+model Property {
+  id        String   @id @default(cuid())
+  orgId     String
+  title     String
+  intent    String   @default("SALE")
+  type      String   @default("APARTMENT")
+  price     Float?
+  bedrooms  Int?
+  bathrooms Int?
+  area      String?
+  city      String?
+  address   String?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model Appointment {
+  id         String   @id @default(cuid())
+  orgId      String
+  leadId     String?
+  propertyId String?
+  agentId    String?
+  startsAt   DateTime
+  endsAt     DateTime
+  status     String   @default("REQUESTED")
+  notes      String?
+  createdAt  DateTime @default(now())
+  lead       Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@index([orgId, startsAt])
+}
+
+model Workflow {
+  id        String   @id @default(cuid())
+  orgId     String
+  name      String
+  trigger   String
+  config    String   @default("{}")
+  enabled   Boolean  @default(true)
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  runs      WorkflowRun[]
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model WorkflowRun {
+  id         String   @id @default(cuid())
+  workflowId String
+  orgId      String
+  leadId     String?
+  eventKey   String
+  status     String   @default("SUCCESS")
+  attempts   Int      @default(0)
+  log        String   @default("[]")
+  createdAt  DateTime @default(now())
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  @@unique([workflowId, eventKey])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  orgId     String
+  userId    String?
+  type      String
+  entity    String
+  entityId  String?
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@index([orgId, createdAt])
+}
+
+model Prospect {
+  id           String    @id @default(cuid())
+  name         String
+  company      String?
+  city         String?
+  country      String?
+  source       String    @default("MANUAL")
+  status       String    @default("NEW")
+  nextAction   String?
+  nextActionAt DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  orgId     String?
+  action    String
+  target    String
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+}
+
+model FeatureFlag {
+  id          String  @id @default(cuid())
+  key         String  @unique
+  enabled     Boolean @default(false)
+  description String  @default("")
+}
