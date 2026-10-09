@@ -36,6 +36,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <div className="pt-3 mt-3 border-t border-zinc-100">
                 <div className="px-3 pb-1 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Platform</div>
                 <Link href="/admin" className="navlink">Admin console</Link>
+                <Link href="/admin/integrations" className="navlink">Integrations</Link>
+                <Link href="/admin/services" className="navlink">Service catalog</Link>
                 <Link href="/admin/prospects" className="navlink">Prospects</Link>
               </div>
             )}

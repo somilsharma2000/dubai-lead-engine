@@ -212,3 +212,13 @@ model FeatureFlag {
   enabled     Boolean @default(false)
   description String  @default("")
 }
+
+model IntegrationConfig {
+  id        String   @id @default(cuid())
+  orgId     String
+  provider  String
+  status    String   @default("PENDING_VERIFICATION")
+  config    String   @default("{}")
+  updatedAt DateTime @updatedAt
+  @@unique([orgId, provider])
+}
