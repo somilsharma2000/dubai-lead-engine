@@ -9,7 +9,7 @@ import { handleEvent } from '@/workflow';
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const ctx = await requirePerm('leads.read');
-    const lead = await prisma.lead.findFirst({ where: { id: params.id, orgId: ctx.org.id }, include: { notes: true, tasks: true } });
+    const lead = await prisma.lead.findFirst({ where: { id: params.id, orgId: ctx.org.id }, include: { notes: true, tasks: true, messages: { orderBy: { createdAt: "asc" } } } });
     if (!lead) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     return NextResponse.json({ ok: true, lead });
   } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }

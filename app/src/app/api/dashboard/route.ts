@@ -10,7 +10,7 @@ export async function GET() {
     const now = new Date();
     const d7 = new Date(now.getTime() - 7 * 86400 * 1000);
     const d30 = new Date(now.getTime() - 30 * 86400 * 1000);
-    const [newLeads7d, total, byStage, active, overdueTasks, upcomingApts, activities, followups, leads30] = await Promise.all([
+    const [newLeads7d, total, byStage, active, overdueTasks, upcomingApts, activities, followups, leads30, campaigns, pendingDrafts] = await Promise.all([
       prisma.lead.count({ where: { orgId, createdAt: { gte: d7 }, archivedAt: null } }),
       prisma.lead.count({ where: { orgId, archivedAt: null } }),
       prisma.lead.groupBy({ by: ['stage'], where: { orgId, archivedAt: null }, _count: { _all: true } }),
@@ -19,7 +19,9 @@ export async function GET() {
       prisma.appointment.count({ where: { orgId, startsAt: { gte: now, lte: new Date(now.getTime() + 7 * 86400 * 1000) }, status: { in: ['REQUESTED','CONFIRMED'] } } }),
       prisma.activity.findMany({ where: { orgId }, orderBy: { createdAt: 'desc' }, take: 10 }),
       prisma.task.findMany({ where: { orgId, kind: 'FOLLOWUP', createdAt: { gte: d30 } }, select: { leadId: true } }),
-      prisma.lead.findMany({ where: { orgId, createdAt: { gte: d30 }, archivedAt: null }, select: { id: true } })
+      prisma.lead.findMany({ where: { orgId, createdAt: { gte: d30 }, archivedAt: null }, select: { id: true } }),
+      prisma.campaign.findMany({ where: { orgId }, orderBy: { createdAt: 'desc' }, take: 50 }),
+      prisma.message.count({ where: { orgId, status: 'APPROVAL_PENDING' } })
     ]);
     // response rate: % of last-30d leads that got a followup task within 48h of creation
     const followupLeadIds = new Set(followups.filter(t => t.leadId).map(t => t.leadId));
@@ -36,6 +38,8 @@ export async function GET() {
         overdueTasks, upcomingViewings7d: upcomingApts,
         demoLabelled: false
       },
+      campaigns,
+      pendingDrafts,
       activity: activities
     });
   } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }

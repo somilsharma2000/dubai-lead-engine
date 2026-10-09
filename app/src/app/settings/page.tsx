@@ -1,22 +1,20 @@
 import { prisma } from '@/db';
 import { requireCtx } from '@/auth';
-import { updateOrgAction, inviteMemberAction } from '../actions';
+import { updateOrgAction, inviteMemberAction, toggleOnboardingAction } from '../actions';
 
-const ONBOARDING = [
-  'Business discovery form completed (market, territory, property types, ICP)',
-  'Brand voice + approved business facts recorded',
-  'Property inventory imported / connected',
-  'WhatsApp channel setup + consent rules confirmed',
-  'Calendar + agent availability configured',
-  'Lead routing rules reviewed',
-  'Automation test suite passed (workflows fired on test lead)',
-  'Content calendar approved',
-  'Client reporting cadence agreed'
-];
+
 
 export default async function Settings() {
   const ctx = await requireCtx();
   const members = await prisma.membership.findMany({ where: { orgId: ctx.org.id }, include: { user: true } });
+  let items = await prisma.onboardingItem.findMany({ where: { orgId: ctx.org.id }, orderBy: { ord: 'asc' } });
+  if (items.length === 0) {
+    const DEFAULTS = ['Business discovery form completed (market, territory, property types, ICP)','Brand voice + approved business facts recorded','Property inventory imported','WhatsApp channel setup + consent rules confirmed','Calendar + agent availability configured','Lead routing rules reviewed','Automation test suite passed','Content calendar approved','Client reporting cadence agreed'];
+    for (let i = 0; i < DEFAULTS.length; i++) {
+      await prisma.onboardingItem.create({ data: { orgId: ctx.org.id, label: DEFAULTS[i], ord: i } });
+    }
+    items = await prisma.onboardingItem.findMany({ where: { orgId: ctx.org.id }, orderBy: { ord: 'asc' } });
+  }
   return (
     <div className="space-y-6 max-w-3xl">
       <h1 className="text-2xl font-semibold">Settings</h1>
@@ -49,10 +47,16 @@ export default async function Settings() {
       </div>
       <div className="card">
         <h2 className="font-semibold mb-2">Onboarding checklist</h2>
-        <ol className="list-decimal list-inside text-sm text-zinc-700 space-y-1">
-          {ONBOARDING.map(o => <li key={o}>{o}</li>)}
-        </ol>
-        <p className="text-xs text-zinc-400 mt-2">Checklist state tracking ships with the client workspace in the next phase.</p>
+        <div className="space-y-1">
+          {items.map((o, i) => (
+            <form key={o.id} action={toggleOnboardingAction} className="flex items-center gap-2">
+              <input type="hidden" name="itemId" value={o.id} />
+              <button className={`badge ${o.done ? 'bg-emerald-100 text-emerald-800' : 'bg-zinc-100 text-zinc-600'}`}>{o.done ? 'DONE' : 'TODO'}</button>
+              <span className={`text-sm ${o.done ? 'line-through text-zinc-400' : 'text-zinc-700'}`}>{i + 1}. {o.label}</span>
+            </form>
+          ))}
+        </div>
+        <p className="text-xs text-zinc-400 mt-2">Click DONE/TODO to toggle. Saved permanently in the database.</p>
       </div>
     </div>
   );

@@ -71,6 +71,7 @@ model Lead {
   stage         String    @default("NEW")
   score         Int       @default(0)
   consent       String    @default("UNKNOWN")
+  botPaused     Boolean   @default(false)
   ownerId       String?
   lastActivityAt DateTime  @default(now())
   createdAt     DateTime  @default(now())
@@ -80,6 +81,7 @@ model Lead {
   notes         Note[]
   tasks         Task[]
   appointments  Appointment[]
+  messages      Message[]
   @@index([orgId, stage])
 }
 
@@ -221,4 +223,46 @@ model IntegrationConfig {
   config    String   @default("{}")
   updatedAt DateTime @updatedAt
   @@unique([orgId, provider])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  orgId      String
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  channel    String   @default("WHATSAPP")
+  direction  String   @default("IN")
+  body       String
+  status     String   @default("SENT")
+  source     String   @default("AGENT")
+  createdAt  DateTime @default(now())
+}
+
+model Campaign {
+  id           String    @id @default(cuid())
+  orgId        String
+  name         String
+  channel      String    @default("INSTAGRAM")
+  type         String    @default("REEL")
+  status       String    @default("IDEA")
+  scheduledFor DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model OnboardingItem {
+  id     String  @id @default(cuid())
+  orgId  String
+  label  String
+  done   Boolean @default(false)
+  ord    Int     @default(0)
+}
+
+model UsageEvent {
+  id     String @id @default(cuid())
+  orgId  String
+  metric String
+  count  Int    @default(1)
+  day    String
+  @@unique([orgId, metric, day])
 }

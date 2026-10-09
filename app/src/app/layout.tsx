@@ -9,12 +9,15 @@ export const metadata: Metadata = { title: 'Growth OS', description: 'Real Estat
 const NAV = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/leads', label: 'Leads' },
+  { href: '/conversations', label: 'Conversations' },
   { href: '/tasks', label: 'Tasks' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/properties', label: 'Properties' },
+  { href: '/campaigns', label: 'Campaigns' },
   { href: '/workflows', label: 'Workflows' },
   { href: '/integrations', label: 'Integrations' },
   { href: '/settings', label: 'Settings' },
+  { href: '/billing', label: 'Billing' },
 ];
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -24,7 +24,7 @@ const member2 = { name: 'Other', email: `other${uniq}@test.local`, password: 'Pa
 // 1. signup works + session cookie issued
 let r = await api('POST', '/api/auth/signup', admin);
 t('1. signup creates org + session', r.status === 200 && r.data?.ok === true, JSON.stringify(r.data).slice(0, 80));
-const C1 = r.cookie;
+let C1 = r.cookie;
 
 // 2. unauthenticated access rejected
 r = await api('GET', '/api/leads');
@@ -63,7 +63,7 @@ t('8. CSV export works', r.status === 200 && csv.includes('Test Buyer'), csv.spl
 
 // 9. tenant isolation: second org cannot read lead 1
 r = await api('POST', '/api/auth/signup', member2);
-const C2 = r.cookie;
+let C2 = r.cookie;
 t('9. second signup ok', r.data?.ok === true);
 r = await api('GET', `/api/leads/${leadId}`, null, C2);
 t('9b. cross-org lead access blocked (404)', r.status === 404);
@@ -79,10 +79,56 @@ r = await api('POST', '/api/auth/login', { email: admin.email, password: 'wrong'
 t('11. wrong password rejected (401)', r.status === 401);
 r = await api('POST', '/api/auth/login', { email: admin.email, password: admin.password });
 t('11b. correct login ok', r.data?.ok === true);
+C1 = r.cookie || C1;
 r = await api('POST', '/api/auth/logout', null, C1);
 t('11c. logout ok', r.data?.ok === true);
 r = await api('GET', '/api/leads', null, C1);
 t('11d. session invalid after logout (401)', r.status === 401);
+// fresh session for the module tests
+r = await api('POST', '/api/auth/login', { email: admin.email, password: admin.password });
+C1 = r.cookie || C1;
+
+
+// 12. conversations: manual message to a lead
+r = await api('POST', '/api/messages', { leadId, body: 'Hi, confirming your viewing slot.' }, C1);
+t('12. manual message stored', r.status === 200 && r.data?.ok === true);
+
+// 13. rule-based draft + approval
+r = await api('POST', '/api/messages', { leadId }, C1);
+t('13. rule-based draft created', r.status === 200);
+r = await api('GET', '/api/leads/' + leadId, null, C1);
+const draft = (r.data?.lead?.messages || []).find(m => m.status === 'APPROVAL_PENDING');
+t('13b. draft pending approval', !!draft, draft?.body?.slice(0, 40));
+r = await api('PATCH', '/api/messages', { messageId: draft.id, decision: 'SEND' }, C1);
+t('13c. draft approved', r.status === 200);
+
+// 14. consent enforcement: DENIED lead cannot be messaged
+r = await api('POST', '/api/leads', { name: 'Denied Person', phone: '+971500000010', consent: 'DENIED' }, C1);
+const deniedId = r.data?.lead?.id;
+r = await api('POST', '/api/messages', { leadId: deniedId, body: 'hi' }, C1);
+t('14. DENIED lead messaging blocked (403)', r.status === 403);
+
+// 15. bot pause (human handoff)
+r = await api('PATCH', '/api/messages', { leadId }, C1);
+t('15. bot paused (handoff)', r.status === 200);
+r = await api('POST', '/api/messages', { leadId }, C1);
+t('15b. drafting blocked while paused (409)', r.status === 409);
+r = await api('PATCH', '/api/messages', { leadId }, C1);
+
+// 16. campaigns: create, move through pipeline, delete
+r = await api('POST', '/api/campaigns', { name: 'Marina reel #1' }, C1);
+t('16. campaign created', r.status === 200);
+r = await api('GET', '/api/dashboard', null, C1);
+const camp = (r.data?.campaigns || [])[0];
+t('16b. campaign visible', !!camp);
+r = await api('PATCH', '/api/campaigns', { campaignId: camp.id, status: 'POSTED' }, C1);
+t('16c. campaign moved to POSTED', r.status === 200);
+r = await api('DELETE', '/api/campaigns?campaignId=' + camp.id, null, C1);
+t('16d. campaign deleted', r.status === 200);
+
+// 17. tenant isolation for campaigns
+r = await api('PATCH', '/api/campaigns', { campaignId: camp.id, status: 'IDEA' }, C2);
+t('17. cross-org campaign access blocked (404)', r.status === 404);
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

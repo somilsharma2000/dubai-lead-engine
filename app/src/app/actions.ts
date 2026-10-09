@@ -26,6 +26,7 @@ export async function createLeadAction(fd: FormData) {
   if (note) await prisma.note.create({ data: { leadId: lead.id, authorId: ctx.user.id, body: note } });
   await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'lead.created', entity: 'Lead', entityId: lead.id } });
   await handleEvent(ctx.org.id, 'LEAD_CREATED', lead);
+  await recordUsage(ctx.org.id, 'leads.created');
   redirect(`/leads/${lead.id}`);
 }
 
@@ -209,4 +210,125 @@ export async function saveIntegrationAction(fd: FormData) {
   });
   await logAudit(ctx.user.id, ctx.org.id, 'integration.credentials_saved', provider, { fields: Object.keys(config) });
   revalidatePath('/admin/integrations');
+}
+
+async function recordUsage(orgId: string, metric: string) {
+  const day = new Date().toISOString().slice(0, 10);
+  await prisma.usageEvent.upsert({
+    where: { orgId_metric_day: { orgId, metric, day } },
+    create: { orgId, metric, day, count: 1 },
+    update: { count: { increment: 1 } }
+  });
+}
+
+// === Conversations (AI center; AI key NOT connected -> rule-based drafts, honestly labelled) ===
+export async function sendManualMessageAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const leadId = S(fd, 'leadId')!;
+  const body = S(fd, 'body')!;
+  const lead = await prisma.lead.findFirst({ where: { id: leadId, orgId: ctx.org.id } });
+  if (!lead) return;
+  if (lead.consent === 'DENIED') return; // consent guard: never message a DENIED lead
+  await prisma.message.create({ data: { orgId: ctx.org.id, leadId, direction: 'OUT', body, status: 'SENT', source: 'AGENT' } });
+  await recordUsage(ctx.org.id, 'messages.manual');
+  revalidatePath(`/conversations/${leadId}`); revalidatePath('/conversations');
+}
+
+export async function draftReplyAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const leadId = S(fd, 'leadId')!;
+  const lead = await prisma.lead.findFirst({
+    where: { id: leadId, orgId: ctx.org.id },
+    include: { notes: { orderBy: { createdAt: 'desc' }, take: 1 } }
+  });
+  if (!lead || lead.consent === 'DENIED' || lead.botPaused) return;
+  const props = await prisma.property.findMany({
+    where: { orgId: ctx.org.id, status: 'ACTIVE', price: lead.budgetMax ? { lte: lead.budgetMax * 1.05 } : undefined },
+    take: 2
+  });
+  const lines = [`Hi ${lead.name.split(' ')[0]}, thanks for reaching out about ${lead.intent === 'BUY' ? 'buying' : 'renting'}.`];
+  if (props.length) lines.push(`I have ${props.length} matching option${props.length > 1 ? 's' : ''} in your budget${lead.city ? ` in ${lead.city}` : ''} — shall I send details or book a viewing this week?`);
+  else lines.push('Could you share your budget and preferred area? I will send you the best current options.');
+  if (lead.consent === 'UNKNOWN') lines.push('(If you prefer, reply STOP and we will not message again.)');
+  await prisma.message.create({
+    data: { orgId: ctx.org.id, leadId, direction: 'OUT', body: lines.join(' '), status: 'APPROVAL_PENDING', source: 'RULE_DRAFT' }
+  });
+  await recordUsage(ctx.org.id, 'drafts.rule_based');
+  revalidatePath(`/conversations/${leadId}`);
+}
+
+export async function approveMessageAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const messageId = S(fd, 'messageId')!;
+  const decision = S(fd, 'decision')!; // SEND or DISCARD
+  const msg = await prisma.message.findFirst({ where: { id: messageId, orgId: ctx.org.id } });
+  if (!msg || msg.status !== 'APPROVAL_PENDING') return;
+  const lead = await prisma.lead.findFirst({ where: { id: msg.leadId, orgId: ctx.org.id } });
+  if (!lead || lead.consent === 'DENIED') return;
+  if (decision === 'SEND') {
+    await prisma.message.update({ where: { id: messageId }, data: { status: 'SENT' } });
+    await recordUsage(ctx.org.id, 'messages.approved');
+  } else {
+    await prisma.message.delete({ where: { id: messageId } });
+  }
+  revalidatePath(`/conversations/${msg.leadId}`);
+}
+
+export async function toggleBotAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const leadId = S(fd, 'leadId')!;
+  const lead = await prisma.lead.findFirst({ where: { id: leadId, orgId: ctx.org.id } });
+  if (!lead) return;
+  await prisma.lead.update({ where: { id: leadId }, data: { botPaused: !lead.botPaused } });
+  revalidatePath(`/conversations/${leadId}`);
+}
+
+// === Campaigns (content pipeline) ===
+export async function createCampaignAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  await prisma.campaign.create({
+    data: { orgId: ctx.org.id, name: S(fd, 'name')!, channel: S(fd, 'channel') || 'INSTAGRAM', type: S(fd, 'type') || 'REEL' }
+  });
+  revalidatePath('/campaigns');
+}
+
+export async function updateCampaignAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const campaignId = S(fd, 'campaignId')!;
+  const c = await prisma.campaign.findFirst({ where: { id: campaignId, orgId: ctx.org.id } });
+  if (!c) return;
+  const data: any = {};
+  const status = S(fd, 'status'); if (status) data.status = status;
+  const sched = S(fd, 'scheduledFor'); if (sched) data.scheduledFor = new Date(sched);
+  await prisma.campaign.update({ where: { id: campaignId }, data });
+  if (data.status === 'POSTED') await recordUsage(ctx.org.id, 'posts.published');
+  revalidatePath('/campaigns');
+}
+
+export async function deleteCampaignAction(fd: FormData) {
+  const ctx = await requirePerm('leads.write');
+  const campaignId = S(fd, 'campaignId')!;
+  const c = await prisma.campaign.findFirst({ where: { id: campaignId, orgId: ctx.org.id } });
+  if (c) await prisma.campaign.delete({ where: { id: campaignId } });
+  revalidatePath('/campaigns');
+}
+
+// === Onboarding checklist ===
+export async function toggleOnboardingAction(fd: FormData) {
+  const ctx = await requirePerm('org.settings');
+  const itemId = S(fd, 'itemId')!;
+  const item = await prisma.onboardingItem.findFirst({ where: { id: itemId, orgId: ctx.org.id } });
+  if (!item) return;
+  await prisma.onboardingItem.update({ where: { id: itemId }, data: { done: !item.done } });
+  revalidatePath('/settings');
+}
+
+// === Billing (demo package switch; real payments BLOCKED until Razorpay) ===
+export async function switchPackageDemoAction(fd: FormData) {
+  const ctx = await requirePerm('org.settings');
+  const pkg = S(fd, 'pkg')!;
+  if (!['LEAD_ENGINE', 'LEAD_MACHINE', 'MARKET_DOMINATION'].includes(pkg)) return;
+  await prisma.organization.update({ where: { id: ctx.org.id }, data: { pkg } });
+  await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'package.demo_switch', entity: 'Organization', entityId: ctx.org.id, meta: pkg } });
+  revalidatePath('/billing'); revalidatePath('/settings');
 }
