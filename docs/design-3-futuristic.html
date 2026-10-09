@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direction 3 — Dark & Futuristic</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05060a;color:#e8ecf4;font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+::selection{background:#00f0ff;color:#05060a}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(0,240,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.045) 1px,transparent 1px);
+background-size:56px 56px;
+mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+-webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%)}
+.glow{position:fixed;z-index:0;pointer-events:none;filter:blur(110px);opacity:.55;border-radius:50%}
+.glow.g1{width:560px;height:560px;background:#0e4a5f;top:-220px;left:12%;animation:dr 24s ease-in-out infinite alternate}
+.glow.g2{width:520px;height:520px;background:#3b1d78;top:8%;right:-180px;animation:dr 30s ease-in-out infinite alternate-reverse}
+@keyframes dr{to{transform:translate(70px,50px)}}
+nav{position:fixed;top:0;width:100%;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:18px 32px;background:rgba(5,6,10,.75);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,240,255,.12)}
+.logo{font-weight:700;font-size:19px;letter-spacing:.04em}.logo span{color:#00f0ff;text-shadow:0 0 18px rgba(0,240,255,.8)}
+.cta{border:1px solid rgba(0,240,255,.5);color:#00f0ff;padding:11px 24px;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;background:rgba(0,240,255,.06);transition:.3s;box-shadow:0 0 0 rgba(0,240,255,0)}
+.cta:hover{background:rgba(0,240,255,.16);box-shadow:0 0 34px rgba(0,240,255,.35);text-shadow:0 0 10px rgba(0,240,255,.9)}
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:130px 32px 60px}
+.sys{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(0,240,255,.3);background:rgba(0,240,255,.05);padding:8px 18px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#8beff7;margin-bottom:30px;width:max-content}
+.sys i{width:8px;height:8px;border-radius:50%;background:#00f0ff;box-shadow:0 0 12px #00f0ff;animation:bl 1.6s infinite}
+@keyframes bl{50%{opacity:.3}}
+h1{font-size:clamp(42px,7.4vw,102px);line-height:1.02;font-weight:700;letter-spacing:-.03em;max-width:1000px}
+h1 em{font-style:normal;color:transparent;background:linear-gradient(92deg,#00f0ff,#7b5cd6,#00f0ff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;animation:sh 5s linear infinite;text-shadow:0 0 60px rgba(0,240,255,.25)}
+@keyframes sh{to{background-position:200% 0}}
+.sub{max-width:580px;margin-top:28px;color:#9aa3b8;font-size:17.5px;line-height:1.6}
+.btns{margin-top:42px;display:flex;gap:16px;flex-wrap:wrap}
+.b1{background:#00f0ff;color:#05060a;padding:17px 38px;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:.3s;box-shadow:0 0 0 rgba(0,240,255,0)}
+.b1:hover{box-shadow:0 0 50px rgba(0,240,255,.7);transform:translateY(-2px)}
+.b2{border:1px solid rgba(232,236,244,.25);color:#e8ecf4;padding:17px 38px;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:.3s}
+.b2:hover{border-color:#00f0ff;color:#00f0ff}
+.panel{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:0 32px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+.card{position:relative;background:rgba(12,15,24,.72);border:1px solid rgba(0,240,255,.14);border-radius:18px;padding:32px 28px;backdrop-filter:blur(12px);transition:transform .4s,border-color .4s,box-shadow .4s;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00f0ff,transparent);opacity:0;transition:.4s}
+.card:hover{transform:translateY(-6px);border-color:rgba(0,240,255,.45);box-shadow:0 24px 60px rgba(0,240,255,.12)}
+.card:hover::before{opacity:1}
+.card .ic{width:44px;height:44px;border-radius:12px;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.3);display:flex;align-items:center;justify-content:center;color:#00f0ff;font-size:19px;margin-bottom:18px;text-shadow:0 0 14px rgba(0,240,255,.7)}
+.card h3{font-size:20px;font-weight:600;margin-bottom:10px}
+.card p{color:#9aa3b8;font-size:14.5px;line-height:1.6}
+.sect{padding:110px 0;position:relative;z-index:1}
+.sect h2{font-size:clamp(32px,5vw,60px);font-weight:700;letter-spacing:-.025em;line-height:1.05}
+.sect h2 em{font-style:normal;color:#00f0ff;text-shadow:0 0 30px rgba(0,240,255,.5)}
+.ctaband{position:relative;z-index:1;text-align:center;border:1px solid rgba(0,240,255,.2);border-radius:26px;margin:0 32px 100px;padding:90px 32px;background:radial-gradient(ellipse 60% 80% at 50% 110%,rgba(0,240,255,.12),transparent 70%),rgba(10,13,20,.6);backdrop-filter:blur(10px)}
+.ctaband h2{font-size:clamp(30px,4.6vw,52px);font-weight:700}
+.ctaband p{color:#9aa3b8;margin-top:18px}
+.ctaband a{display:inline-block;margin-top:34px;background:#00f0ff;color:#05060a;padding:18px 44px;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:.3s}
+.ctaband a:hover{box-shadow:0 0 60px rgba(0,240,255,.7)}
+.up{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.up.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.up{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div><div class="glow g1"></div><div class="glow g2"></div>
+<nav><div class="logo">LEAD<span>ENGINE</span></div><a class="cta" href="#">Book a free call</a></nav>
+<header class="hero">
+<span class="sys"><i></i>System online — Dubai real estate only</span>
+<h1 class="up">Every inquiry answered in seconds. <em>Even at 3 AM.</em></h1>
+<p class="sub up">A 24/7 AI lead machine built exclusively for Dubai real estate agents. Captures, qualifies and books your buyers while you sleep.</p>
+<div class="btns up"><a class="b1" href="#">Book a free strategy call</a><a class="b2" href="#">See what we build</a></div>
+</header>
+<div class="panel">
+<div class="cards">
+<div class="card up"><div class="ic">◈</div><h3>24/7 WhatsApp AI</h3><p>Instant replies, listing details, viewings booked into your calendar. English, Arabic, Russian, Hindi and more.</p></div>
+<div class="card up"><div class="ic">◉</div><h3>Exact buyer targeting</h3><p>Nationality, income, postcode-level precision. Your ads chase deals, not scrollers.</p></div>
+<div class="card up"><div class="ic">◇</div><h3>Full-stack presence</h3><p>Reels, reviews, landing pages, nine platforms, 100 services. One machine. One invoice.</p></div>
+</div>
+</div>
+<section class="sect"><div class="panel">
+<h2 class="up">Buyers message five agents at midnight. <em>Be the one who answers.</em></h2>
+<div class="cards">
+<div class="card up"><div class="ic">01</div><h3>Free sample in 48h</h3><p>A sample reel or bot demo for YOUR brand. No cost, no meeting required.</p></div>
+<div class="card up"><div class="ic">02</div><h3>14-day trial</h3><p>Pay setup only if you keep it. One extra viewing covers everything.</p></div>
+<div class="card up"><div class="ic">03</div><h3>Dominate</h3><p>Stack one new system every month. Your competitors rent posts — you own a machine.</p></div>
+</div>
+</div></section>
+<div class="ctaband">
+<h2 class="up">Ready to stop losing leads at midnight?</h2>
+<p class="up">Free sample plan on WhatsApp within a few hours.</p>
+<a class="up" href="#">Get my free sample plan</a>
+</div>
+<script>
+document.querySelectorAll('.up').forEach(function(el){
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.disconnect()}})},{threshold:.12});
+io.observe(el);
+});
+</script>
+</body>
+</html>
