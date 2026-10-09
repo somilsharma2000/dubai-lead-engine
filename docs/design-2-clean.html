@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direction 2 — Clean White Minimal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#fff;color:#1d1d1f;font-family:'Inter',-apple-system,sans-serif;overflow-x:hidden}
+::selection{background:#0071e3;color:#fff}
+.nav{position:fixed;top:0;width:100%;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:14px 32px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px)}
+.logo{font-weight:700;font-size:19px;letter-spacing:-.02em}
+.nav a.l{color:#424245;text-decoration:none;font-size:14px;margin-left:26px;transition:.2s}
+.nav a.l:hover{color:#000}
+.nav .cta{color:#0071e3;text-decoration:none;font-size:14px;font-weight:500;margin-left:26px}
+.hero{min-height:96vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 28px 60px}
+.tagpill{display:inline-block;background:#f5f5f7;color:#1d1d1f;font-size:13px;font-weight:600;padding:7px 16px;border-radius:999px;margin-bottom:28px}
+.tagpill em{color:#0071e3;font-style:normal;font-weight:700}
+h1{font-size:clamp(44px,7.5vw,96px);font-weight:700;letter-spacing:-.028em;line-height:1.04;max-width:980px}
+h1 .fade{background:linear-gradient(90deg,#1d1d1f,#86868b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{max-width:620px;margin-top:26px;font-size:21px;line-height:1.5;color:#6e6e73;font-weight:500}
+.links{margin-top:34px;display:flex;gap:34px}
+.links a{color:#0071e3;text-decoration:none;font-size:19px;font-weight:500}
+.links a:hover{text-decoration:underline}
+.links a::after{content:" ›";font-weight:400}
+.holder{width:min(1080px,92%);margin:60px auto 0;border-radius:28px;background:linear-gradient(160deg,#eef1f6,#f8f4ec);aspect-ratio:16/8.5;position:relative;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.12)}
+.holder .in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:44px}
+.holder .in h3{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.holder .in p{color:#6e6e73;margin-top:8px;font-size:15px}
+.chiprow{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.chip{background:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;color:#1d1d1f;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.grid{width:min(1080px,92%);margin:80px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.tile{background:#f5f5f7;border-radius:28px;padding:44px 36px;min-height:320px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.tile:hover{transform:translateY(-6px)}
+.tile h3{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:auto}
+.tile p{color:#6e6e73;font-size:15px;margin-top:10px}
+.tile .k{font-size:13px;font-weight:700;color:#0071e3;text-transform:uppercase;letter-spacing:.06em}
+.tile.dark{background:#1d1d1f;color:#f5f5f7}
+.tile.dark p{color:#a1a1a6}
+.tile.dark .k{color:#6e9eff}
+.ctaband{text-align:center;padding:110px 28px;background:#f5f5f7}
+.ctaband h2{font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-.025em}
+.ctaband p{color:#6e6e73;font-size:19px;margin-top:16px}
+.ctaband a{display:inline-block;margin-top:30px;background:#0071e3;color:#fff;border-radius:999px;padding:16px 40px;font-size:17px;font-weight:600;text-decoration:none;transition:.25s}
+.ctaband a:hover{background:#0077ed;transform:scale(1.03)}
+.up{opacity:0;transform:translateY(36px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+.up.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.up{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><div class="logo">LeadEngine</div><div><a class="l" href="#">Why us</a><a class="l" href="#">Services</a><a class="l" href="#">Pricing</a><a class="l" href="#">FAQ</a><a class="cta" href="#">Book a free call ›</a></div></nav>
+<header class="hero">
+<span class="tagpill up">New — <em>WhatsApp AI</em> for Dubai real estate</span>
+<h1 class="up">Every inquiry answered<br>in seconds. <span class="fade">Even at 3 AM.</span></h1>
+<p class="sub up">A studio with one obsession: turning Dubai real estate agents into the agent buyers find first. No generalists. No fluff.</p>
+<div class="links up"><a href="#">Book a free strategy call</a><a href="#">See what we build</a></div>
+<div class="holder up">
+<div class="in">
+<span class="k">Lead Machine</span>
+<h3>Your entire online presence. One monthly plan.</h3>
+<p>WhatsApp AI · Reels · Reviews · Landing pages · Ads — reported in dirhams and viewings booked.</p>
+<div class="chiprow"><span class="chip">24/7 AI bot</span><span class="chip">12+ posts/month</span><span class="chip">48-hour builds</span><span class="chip">100 services</span></div>
+</div>
+</div>
+</header>
+<div class="grid">
+<div class="tile up"><span class="k">Capture</span><h3>24/7 WhatsApp AI</h3><p>Answers instantly, books viewings into your calendar, follows up for 30 days. Every language your buyers speak.</p></div>
+<div class="tile dark up"><span class="k">Trust</span><h3>Review machine</h3><p>Every happy client asked automatically, every review answered. Your ranking climbs past every competitor in your area.</p></div>
+<div class="tile up"><span class="k">Target</span><h3>Exact buyer targeting</h3><p>Right nationality, income and postcode. Your ads chase deals, not scrollers.</p></div>
+</div>
+<section class="ctaband">
+<h2 class="up">See the work before you pay a dirham.</h2>
+<p class="up">Free sample in 48 hours. 14-day trial. No lock-in, ever.</p>
+<a href="#">Get my free sample plan</a>
+</section>
+<script>
+document.querySelectorAll('.up').forEach(function(el){
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.disconnect()}})},{threshold:.12});
+io.observe(el);
+});
+</script>
+</body>
+</html>
