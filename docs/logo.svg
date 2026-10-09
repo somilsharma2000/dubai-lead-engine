@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 160">
+<rect width="560" height="160" fill="#0b0d12"/>
+<g>
+<circle cx="80" cy="80" r="52" fill="none" stroke="#c9a96a" stroke-width="1.6"/>
+<circle cx="80" cy="80" r="44" fill="none" stroke="#c9a96a" stroke-width="0.7" opacity="0.55"/>
+<text x="80" y="98" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="52" letter-spacing="2" fill="#c9a96a" font-weight="600">LE</text>
+</g>
+<line x1="168" y1="34" x2="168" y2="126" stroke="#c9a96a" stroke-width="0.7" opacity="0.5"/>
+<text x="196" y="76" font-family="Georgia,'Times New Roman',serif" font-size="46" letter-spacing="14" fill="#efe9dc" font-weight="600">LEAD</text>
+<text x="196" y="118" font-family="Georgia,'Times New Roman',serif" font-size="46" letter-spacing="14" fill="#c9a96a" font-weight="600">ENGINE</text>
+</svg>
