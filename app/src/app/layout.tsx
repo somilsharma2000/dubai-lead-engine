@@ -18,6 +18,7 @@ const NAV_GROUPS = [
     { href: '/campaigns', label: 'Campaigns' },
     { href: '/workflows', label: 'Workflows' }] },
   { label: 'Business', items: [
+    { href: '/reports', label: 'Reports' },
     { href: '/integrations', label: 'Integrations' },
     { href: '/billing', label: 'Billing' },
     { href: '/settings', label: 'Settings' }] }

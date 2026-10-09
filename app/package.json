@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "prisma generate && next build",
+    "build": "node scripts/deploy-prepare.mjs && prisma generate && prisma db push --skip-generate --accept-data-loss && next build",
     "start": "next start -p 3000",
     "db:setup": "prisma migrate dev --name init --skip-seed",
     "db:push": "prisma db push",

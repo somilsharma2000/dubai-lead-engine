@@ -150,5 +150,15 @@ t('20. demo login repeatable', r.status === 200);
 r = await api('GET', '/api/leads', null, CD);
 t('21. demo leads are in demo org only', r.data?.leads?.every(l => l.orgId !== undefined));
 
+
+// 22. money report
+r = await api('GET', '/api/reports', null, C1);
+t('22. reports load with funnel', r.data?.ok === true && typeof r.data?.report?.totalLeads === 'number', `leads=${r.data?.report?.totalLeads}, sources=${r.data?.report?.sources?.length}`);
+t('22b. report honesty note present', typeof r.data?.report?.note === 'string' && r.data.report.note.includes('stated'));
+
+// 23. reports page renders for the demo client
+r = await api('GET', '/api/reports', null, CD);
+t('23. demo client can see reports', r.data?.ok === true);
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
