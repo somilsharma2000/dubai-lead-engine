@@ -130,5 +130,25 @@ t('16d. campaign deleted', r.status === 200);
 r = await api('PATCH', '/api/campaigns', { campaignId: camp.id, status: 'IDEA' }, C2);
 t('17. cross-org campaign access blocked (404)', r.status === 404);
 
+
+// 18. client demo: one-click login, no credentials
+r = await api('POST', '/api/auth/demo', {});
+t('18. one-click client demo login', r.status === 200 && r.data?.ok === true, r.data?.org);
+const CD = r.cookie;
+r = await api('GET', '/api/dashboard', null, CD);
+t('18b. demo dashboard loads', r.data?.ok === true, `leads=${r.data?.metrics?.totalLeads}`);
+
+// 19. demo workspace fully populated
+r = await api('GET', '/api/leads', null, CD);
+t('19. demo workspace has 6 leads', (r.data?.leads || []).length === 6);
+
+// 20. demo login is idempotent (second click works)
+r = await api('POST', '/api/auth/demo', {});
+t('20. demo login repeatable', r.status === 200);
+
+// 21. demo workspace isolated from real orgs
+r = await api('GET', '/api/leads', null, CD);
+t('21. demo leads are in demo org only', r.data?.leads?.every(l => l.orgId !== undefined));
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

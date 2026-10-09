@@ -10,7 +10,7 @@ export default async function Dashboard() {
   const orgId = ctx.org.id;
   const now = new Date();
   const d7 = new Date(now.getTime() - 7 * 86400000), d30 = new Date(now.getTime() - 30 * 86400000);
-  const [total, newLeads7d, byStage, active, overdueTasks, upcoming, activities, hasDemo, totalLeadsAll] = await Promise.all([
+  const [total, newLeads7d, byStage, active, overdueTasks, upcoming, activities, hasDemo, totalLeadsAll, campaigns, pendingDrafts, onb, openTasks, nextApt] = await Promise.all([
     prisma.lead.count({ where: { orgId, archivedAt: null } }),
     prisma.lead.count({ where: { orgId, createdAt: { gte: d7 }, archivedAt: null } }),
     prisma.lead.groupBy({ by: ['stage'], where: { orgId, archivedAt: null }, _count: { _all: true } }),
@@ -19,7 +19,12 @@ export default async function Dashboard() {
     prisma.appointment.count({ where: { orgId, startsAt: { gte: now }, status: { in: ['REQUESTED','CONFIRMED'] } } }),
     prisma.activity.findMany({ where: { orgId }, orderBy: { createdAt: 'desc' }, take: 8 }),
     prisma.lead.count({ where: { orgId, name: { startsWith: 'Demo —' } } }),
-    prisma.lead.count({ where: { orgId, archivedAt: null } })
+    prisma.lead.count({ where: { orgId, archivedAt: null } }),
+    prisma.campaign.findMany({ where: { orgId }, select: { status: true } }),
+    prisma.message.count({ where: { orgId, status: 'APPROVAL_PENDING' } }),
+    prisma.onboardingItem.findMany({ where: { orgId } }),
+    prisma.task.count({ where: { orgId, status: 'OPEN' } }),
+    prisma.appointment.findFirst({ where: { orgId, startsAt: { gte: now }, status: 'CONFIRMED' }, orderBy: { startsAt: 'asc' } })
   ]);
   const stages: Record<string, number> = {};
   byStage.forEach(s => stages[s.stage] = s._count._all);
@@ -31,6 +36,8 @@ export default async function Dashboard() {
     { label: 'Pipeline value (stated budgets)', value: fmtMoney(pipeline, ctx.org.currency), small: true, href: '/leads' },
     { label: 'Overdue tasks', value: overdueTasks, warn: overdueTasks > 0, href: '/tasks' },
     { label: 'Upcoming viewings', value: upcoming, href: '/calendar' },
+    { label: 'Campaigns in pipeline', value: campaigns.length, href: '/campaigns' },
+    { label: 'Drafts to approve', value: pendingDrafts, warn: pendingDrafts > 0, href: '/conversations' },
   ];
   return (
     <div className="space-y-6">
@@ -50,6 +57,37 @@ export default async function Dashboard() {
           </Link>
         ))}
       </div>
+      <div className="card">
+        <h2 className="font-semibold mb-1">Everything, one place</h2>
+        <p className="text-xs text-zinc-500 mb-3">The whole system from here — click any module.</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {[
+            { href: '/leads/new', label: 'Add lead', hint: 'scored automatically' },
+            { href: '/conversations', label: 'Conversations', hint: pendingDrafts ? `${pendingDrafts} draft(s) to approve` : 'message threads' },
+            { href: '/campaigns', label: 'Campaigns', hint: campaigns.length ? `${campaigns.length} in pipeline` : 'content pipeline' },
+            { href: '/tasks', label: 'Tasks', hint: openTasks ? `${openTasks} open` : 'nothing due' },
+            { href: '/calendar', label: 'Calendar', hint: nextApt ? `next: ${nextApt.startsAt.toISOString().slice(5, 10)}` : 'viewings & meetings' },
+            { href: '/properties', label: 'Properties', hint: 'inventory' },
+            { href: '/workflows', label: 'Workflows', hint: 'automation engine' },
+            { href: '/settings', label: 'Settings', hint: 'team & checklist' }
+          ].map(m => (
+            <Link key={m.href + m.label} href={m.href} className="border border-zinc-200 rounded-lg p-3 hover:border-amber-400 hover:bg-amber-50 transition-colors">
+              <div className="text-sm font-medium">{m.label}</div>
+              <div className="text-xs text-zinc-500">{m.hint}</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+      {onb.length > 0 && (
+        <div className="card">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-semibold">Setup progress</h2>
+            <span className="badge bg-amber-100 text-amber-800">{onb.filter(o => o.done).length}/{onb.length} done</span>
+          </div>
+          <div className="h-2 bg-zinc-100 rounded"><div className="h-2 bg-amber-700 rounded" style={{ width: `${Math.round(100 * onb.filter(o => o.done).length / onb.length)}%` }} /></div>
+          <p className="text-xs text-zinc-500 mt-2">Finish setup in <Link href="/settings" className="text-amber-800 underline">Settings</Link></p>
+        </div>
+      )}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="card">
           <h2 className="font-semibold mb-3">Pipeline by stage</h2>

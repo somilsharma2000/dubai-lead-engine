@@ -11,3 +11,11 @@ export async function loginAction(fd: FormData) {
   await createSession(user.id);
   redirect('/dashboard');
 }
+import { ensureDemoWorkspace } from '@/demo';
+
+// One-click client demo login (shared demo workspace, synthetic data).
+export async function demoLoginAction() {
+  const { user } = await ensureDemoWorkspace();
+  await createSession(user.id);
+  redirect('/dashboard');
+}

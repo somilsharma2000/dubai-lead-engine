@@ -5,6 +5,8 @@ import { prisma } from '@/db';
 import { getCtx, requirePerm, destroySession, hashPassword, logAudit } from '@/auth';
 import { computeLeadScore } from '@/score';
 import { handleEvent } from '@/workflow';
+import { createSession } from '@/auth';
+import { resetDemoWorkspace } from '@/demo';
 
 const S = (fd: FormData, k: string) => { const v = fd.get(k); return typeof v === 'string' && v.trim() ? v.trim() : null; };
 
@@ -331,4 +333,12 @@ export async function switchPackageDemoAction(fd: FormData) {
   await prisma.organization.update({ where: { id: ctx.org.id }, data: { pkg } });
   await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'package.demo_switch', entity: 'Organization', entityId: ctx.org.id, meta: pkg } });
   revalidatePath('/billing'); revalidatePath('/settings');
+}
+
+// Reset the demo workspace back to its original state (demo org only).
+export async function resetDemoAction() {
+  const ctx = await requirePerm('settings.write');
+  if (ctx.org.slug !== 'demo-prime-realty') throw new Error('Not the demo workspace');
+  await resetDemoWorkspace();
+  revalidatePath('/dashboard');
 }

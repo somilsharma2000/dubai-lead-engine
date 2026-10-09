@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getCtx, verifyPassword } from '@/auth';
 import { prisma } from '@/db';
-import { loginAction } from './actions';
+import { loginAction, demoLoginAction } from './actions';
 
 export default async function Login({ searchParams }: { searchParams: { error?: string } }) {
   const ctx = await getCtx();
@@ -20,6 +20,11 @@ export default async function Login({ searchParams }: { searchParams: { error?: 
           <button className="btn-gold w-full">Sign in</button>
           <p className="text-xs text-center text-zinc-500">No account? <a href="/signup" className="text-amber-800 underline">Create one</a></p>
         </form>
+        <div className="my-4 flex items-center gap-3 text-xs text-zinc-400"><div className="h-px bg-zinc-200 flex-1"></div>or<div className="h-px bg-zinc-200 flex-1"></div></div>
+        <form action={demoLoginAction}>
+          <button className="btn-ghost w-full !py-3 !text-sm font-medium">▶ &nbsp;Try the live client demo — no login needed</button>
+        </form>
+        <p className="text-xs text-center text-zinc-400 mt-2">Opens a full workspace with demo data. Real software, synthetic leads.</p>
       </div>
     </div>
   );
