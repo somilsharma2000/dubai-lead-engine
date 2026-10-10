@@ -53,6 +53,7 @@ export async function updateLeadAction(fd: FormData) {
 
 export async function completeTaskAction(fd: FormData) {
   const ctx = await requirePerm('tasks.write');
+  if (!S(fd, 'taskId')) return;
   await prisma.task.updateMany({ where: { id: S(fd, 'taskId')!, orgId: ctx.org.id }, data: { status: 'DONE', doneAt: new Date() } });
   revalidatePath('/tasks');
   revalidatePath('/dashboard');
@@ -60,6 +61,7 @@ export async function completeTaskAction(fd: FormData) {
 
 export async function createTaskAction(fd: FormData) {
   const ctx = await requirePerm('tasks.write');
+  if (!S(fd, 'title')) return;
   await prisma.task.create({
     data: {
       orgId: ctx.org.id, title: S(fd, 'title')!, kind: S(fd, 'kind') || 'FOLLOWUP',
@@ -72,6 +74,7 @@ export async function createTaskAction(fd: FormData) {
 
 export async function createPropertyAction(fd: FormData) {
   const ctx = await requirePerm('properties.write');
+  if (!S(fd, 'title')) return;
   await prisma.property.create({
     data: {
       orgId: ctx.org.id, title: S(fd, 'title')!, intent: S(fd, 'intent') || 'SALE',
@@ -86,6 +89,7 @@ export async function createPropertyAction(fd: FormData) {
 
 export async function createAppointmentAction(fd: FormData) {
   const ctx = await requirePerm('calendar.write');
+  if (!S(fd, 'startsAt') || isNaN(new Date(S(fd, 'startsAt') as any).getTime())) redirect('/calendar?error=date');
   const leadId = S(fd, 'leadId');
   const propertyId = S(fd, 'propertyId');
   const startsAt = new Date(S(fd, 'startsAt')!);
@@ -102,12 +106,14 @@ export async function createAppointmentAction(fd: FormData) {
 
 export async function setAppointmentStatusAction(fd: FormData) {
   const ctx = await requirePerm('calendar.write');
+  if (!S(fd, 'aptId') || !S(fd, 'status')) return;
   await prisma.appointment.updateMany({ where: { id: S(fd, 'aptId')!, orgId: ctx.org.id }, data: { status: S(fd, 'status')! } });
   revalidatePath('/calendar');
 }
 
 export async function toggleWorkflowAction(fd: FormData) {
   const ctx = await requirePerm('workflows.manage');
+  if (!S(fd, 'wfId')) return;
   const wf = await prisma.workflow.findFirst({ where: { id: S(fd, 'wfId')!, orgId: ctx.org.id } });
   if (wf) {
     await prisma.workflow.update({ where: { id: wf.id }, data: { enabled: !wf.enabled } });
@@ -118,6 +124,7 @@ export async function toggleWorkflowAction(fd: FormData) {
 
 export async function retryRunAction(fd: FormData) {
   const ctx = await requirePerm('workflows.manage');
+  if (!S(fd, 'runId')) return;
   const run = await prisma.workflowRun.findFirst({ where: { id: S(fd, 'runId')!, orgId: ctx.org.id } });
   if (run) {
     const wf = await prisma.workflow.findUnique({ where: { id: run.workflowId } });
@@ -261,8 +268,9 @@ export async function draftReplyAction(fd: FormData) {
 
 export async function approveMessageAction(fd: FormData) {
   const ctx = await requirePerm('leads.write');
-  const messageId = S(fd, 'messageId')!;
-  const decision = S(fd, 'decision')!; // SEND or DISCARD
+  const messageId = S(fd, 'messageId');
+  const decision = S(fd, 'decision'); // SEND or DISCARD
+  if (!messageId || !decision) return;
   const msg = await prisma.message.findFirst({ where: { id: messageId, orgId: ctx.org.id } });
   if (!msg || msg.status !== 'APPROVAL_PENDING') return;
   const lead = await prisma.lead.findFirst({ where: { id: msg.leadId, orgId: ctx.org.id } });
@@ -288,6 +296,7 @@ export async function toggleBotAction(fd: FormData) {
 // === Campaigns (content pipeline) ===
 export async function createCampaignAction(fd: FormData) {
   const ctx = await requirePerm('leads.write');
+  if (!S(fd, 'name')) return;
   await prisma.campaign.create({
     data: { orgId: ctx.org.id, name: S(fd, 'name')!, channel: S(fd, 'channel') || 'INSTAGRAM', type: S(fd, 'type') || 'REEL' }
   });
@@ -296,7 +305,8 @@ export async function createCampaignAction(fd: FormData) {
 
 export async function updateCampaignAction(fd: FormData) {
   const ctx = await requirePerm('leads.write');
-  const campaignId = S(fd, 'campaignId')!;
+  const campaignId = S(fd, 'campaignId');
+  if (!campaignId) return;
   const c = await prisma.campaign.findFirst({ where: { id: campaignId, orgId: ctx.org.id } });
   if (!c) return;
   const data: any = {};
@@ -309,7 +319,8 @@ export async function updateCampaignAction(fd: FormData) {
 
 export async function deleteCampaignAction(fd: FormData) {
   const ctx = await requirePerm('leads.write');
-  const campaignId = S(fd, 'campaignId')!;
+  const campaignId = S(fd, 'campaignId');
+  if (!campaignId) return;
   const c = await prisma.campaign.findFirst({ where: { id: campaignId, orgId: ctx.org.id } });
   if (c) await prisma.campaign.delete({ where: { id: campaignId } });
   revalidatePath('/campaigns');
@@ -317,8 +328,9 @@ export async function deleteCampaignAction(fd: FormData) {
 
 // === Onboarding checklist ===
 export async function toggleOnboardingAction(fd: FormData) {
-  const ctx = await requirePerm('org.settings');
-  const itemId = S(fd, 'itemId')!;
+  const ctx = await requirePerm('settings.write');
+  const itemId = S(fd, 'itemId');
+  if (!itemId) return;
   const item = await prisma.onboardingItem.findFirst({ where: { id: itemId, orgId: ctx.org.id } });
   if (!item) return;
   await prisma.onboardingItem.update({ where: { id: itemId }, data: { done: !item.done } });
@@ -327,7 +339,7 @@ export async function toggleOnboardingAction(fd: FormData) {
 
 // === Billing (demo package switch; real payments BLOCKED until Razorpay) ===
 export async function switchPackageDemoAction(fd: FormData) {
-  const ctx = await requirePerm('org.settings');
+  const ctx = await requirePerm('settings.write');
   const pkg = S(fd, 'pkg')!;
   if (!['LEAD_ENGINE', 'LEAD_MACHINE', 'MARKET_DOMINATION'].includes(pkg)) return;
   await prisma.organization.update({ where: { id: ctx.org.id }, data: { pkg } });

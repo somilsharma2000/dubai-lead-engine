@@ -8,7 +8,9 @@
     "db:setup": "prisma migrate dev --name init --skip-seed",
     "db:push": "prisma db push",
     "smoke": "node scripts/smoke.mjs",
-    "setup": "prisma migrate deploy && prisma generate && node scripts/seed.mjs"
+    "setup": "prisma migrate deploy && prisma generate && node scripts/seed.mjs",
+    "clickbot": "node scripts/clickbot.mjs",
+    "security": "node scripts/security.mjs"
   },
   "dependencies": {
     "@prisma/client": "5.20.0",

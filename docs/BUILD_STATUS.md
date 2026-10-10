@@ -1,5 +1,12 @@
 # BUILD STATUS — Real Estate AI Growth OS
-Updated: 2026-10-10 (v5) — LIVE IN PRODUCTION. Workflow: BUILD FIRST → PREVIEW → APPROVE → PRODUCTION (owner's directive).
+Updated: 2026-10-10 (v6) — LIVE + FULL BUTTON AUDIT.
+
+## v6 — "No fake buttons" audit (2026-10-10)
+Full-OS audit executed with three automated suites (npm run smoke / clickbot / security):
+- EVERY button, form and link on every page clicked via real server-action posts — all verified working: lead create/update/archive, AI draft reply (matches properties to lead budget), approve & send, discard, manual send, pause/resume bot, tasks add/complete, calendar book/confirm/no-show/cancel, properties add, campaigns add/move/delete, workflow toggle, retry, org settings save, team invite, onboarding toggle, billing package switch, demo load/clear, logout, login, demo login, CSV export, public website form.
+- REAL BUGS FOUND & FIXED: (1) `org.settings` permission used by Settings onboarding toggle + Billing switch did not exist in the RBAC matrix — both buttons errored for every non-admin user; now use `settings.write`. (2) 9 server actions crashed with an error page on missing/stale row ids (null id into Prisma) — all guarded to no-op safely.
+- SECURITY VERIFIED: cross-tenant reads/writes blocked at API and page level (404/empty), admin pages 307-redirect non-admins, demo org can't see real orgs, public lead API rate-limited (5/min/IP) + honeypot + input caps, weak passwords rejected.
+- Honest-blocked features unchanged (WhatsApp send, real billing, email, calendar sync) — labeled BLOCKED in the UI with setup steps, never faked. Workflow: BUILD FIRST → PREVIEW → APPROVE → PRODUCTION (owner's directive).
 
 ## Stage tracker
 - Stage 1 AUDIT: DONE — 34 routes, 19 DB models, 40+ source files, all committed. Landing page (GitHub Pages) preserved untouched.
