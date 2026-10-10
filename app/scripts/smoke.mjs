@@ -160,5 +160,14 @@ t('22b. report honesty note present', typeof r.data?.report?.note === 'string' &
 r = await api('GET', '/api/reports', null, CD);
 t('23. demo client can see reports', r.data?.ok === true);
 
+
+// 24. PUBLIC lead capture (what the landing site form uses) — no auth
+r = await api('POST', '/api/public/lead', { name: 'Web Visitor', phone: '+91 9800000000', agency: 'Visitor Realty', need: 'WhatsApp AI bot' });
+t('24. public form lead accepted', r.data?.ok === true, `id=${r.data?.id}`);
+r = await api('POST', '/api/public/lead', { name: 'X' });
+t('24b. public form rejects junk', r.status === 400, `status=${r.status}`);
+r = await api('POST', '/api/public/lead', { name: 'Bot', phone: '+919876543210', website: 'spam-trap' });
+t('24c. honeypot silently drops bots', r.data?.ok === true && !r.data?.id, `ok=${r.data?.ok}`);
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
