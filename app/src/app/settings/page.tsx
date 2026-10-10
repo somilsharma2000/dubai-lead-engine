@@ -62,6 +62,15 @@ export default async function Settings() {
         )}
       </div>
       <div className="card">
+        <h2 className="font-semibold mb-1">Data &amp; backup</h2>
+        <p className="text-xs text-zinc-500 mb-3">Your workspace data is yours. Keep an offline copy — if anything ever goes wrong, this file rebuilds everything.</p>
+        <div className="flex flex-wrap gap-2">
+          <a href="/api/export/leads" className="btn-ghost !text-xs">⬇ Export leads (CSV)</a>
+          <a href="/api/export/backup" className="btn-gold !text-xs">⬇ Download full backup (JSON)</a>
+        </div>
+        <p className="text-[10px] text-zinc-400 mt-2">Backup includes leads, tasks, campaigns, properties, appointments, workflows, social kit and recent activity — everything except passwords (which are never exportable).</p>
+      </div>
+      <div className="card">
         <h2 className="font-semibold mb-2">Onboarding checklist</h2>
         <div className="space-y-1">
           {items.map((o, i) => (

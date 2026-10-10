@@ -27,6 +27,7 @@ export default async function Login({ searchParams }: { searchParams: { error?: 
           <button className="btn-ghost w-full !py-3 !text-sm font-medium">▶ &nbsp;Try the live client demo — no login needed</button>
         </form>
         <p className="text-xs text-center text-zinc-400 mt-2">Opens a full workspace with demo data. Real software, synthetic leads.</p>
+        <p className="text-[10px] text-center text-zinc-400 mt-4">By signing in you agree to our <a href="/legal/terms" className="underline hover:text-amber-700">Terms</a> · <a href="/legal/privacy" className="underline hover:text-amber-700">Privacy</a> · <a href="/legal/refund" className="underline hover:text-amber-700">Refund policy</a></p>
       </div>
     </div>
   );
