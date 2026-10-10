@@ -35,6 +35,7 @@ model Organization {
   workflows  Workflow[]
   activities Activity[]
   invitations Invitation[]
+  socialAssets   SocialAsset[]
 }
 
 model Membership {
@@ -278,4 +279,21 @@ model UsageEvent {
   count  Int    @default(1)
   day    String
   @@unique([orgId, metric, day])
+}
+
+// Social Growth module — the specialist's toolkit, one flexible typed row per asset.
+model SocialAsset {
+  id         String   @id @default(cuid())
+  orgId      String
+  category   String   // CHECKLIST | PILLAR | SERIES | IDEA | HASHTAG | SLOT | KPI | BRAND
+  key        String?  // stable slug for library items (idempotent seeding)
+  title      String
+  detail     String?
+  meta       String?   // JSON string (works on SQLite + Postgres)
+  done       Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  @@index([orgId, category])
 }

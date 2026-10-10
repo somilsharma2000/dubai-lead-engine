@@ -4,6 +4,7 @@ import { requireCtx } from '@/auth';
 import { loadDemoAction, clearDemoAction } from '../actions';
 import { garuInsights } from '@/lib/garu';
 import GaruAssistant from '@/components/GaruAssistant';
+import { ensureSocialLibrary } from '@/lib/social';
 
 const fmtMoney = (n: number, cur: string) => new Intl.NumberFormat('en', { style: 'currency', currency: cur || 'USD', maximumFractionDigits: 0 }).format(n);
 const STAGES = ['NEW', 'CONTACTED', 'QUALIFIED', 'VIEWING', 'NEGOTIATION', 'WON', 'LOST'];
@@ -54,6 +55,14 @@ export default async function Dashboard() {
   // sources
   const maxSrc = Math.max(1, ...(sources.map(s => s._count._all) || [1]));
 
+  await ensureSocialLibrary(orgId);
+  const [socialChk, socialChkDone, socialIdeas, socialSeries] = await Promise.all([
+    prisma.socialAsset.count({ where: { orgId, category: 'CHECKLIST' } }),
+    prisma.socialAsset.count({ where: { orgId, category: 'CHECKLIST', done: true } }),
+    prisma.socialAsset.count({ where: { orgId, category: 'IDEA' } }),
+    prisma.socialAsset.findMany({ where: { orgId, category: 'SERIES' }, orderBy: { sortOrder: 'asc' }, select: { title: true, meta: true } })
+  ]);
+  const socialScore = socialChk ? Math.round(100 * socialChkDone / socialChk) : 0;
   const tips = await garuInsights(orgId);
   const hour = now.getHours();
   const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -217,16 +226,24 @@ export default async function Dashboard() {
               )}
             </div>
             <div className="card">
-              <h2 className="font-semibold mb-2">Content pipeline</h2>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {['IDEA', 'DRAFTED', 'SCHEDULED'].map(s => (
-                  <div key={s} className="border border-zinc-200 rounded-lg p-2">
-                    <div className="text-xs text-zinc-500">{s}</div>
-                    <div className="text-xl font-semibold">{campaigns.filter(c => c.status === s).length}</div>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-semibold">Social growth engine</h2>
+                <Link href="/social" className="text-xs text-amber-800 hover:underline">Open engine →</Link>
               </div>
-              <p className="text-xs text-zinc-500 mt-2">{campaigns.filter(c => c.status === 'POSTED').length} posted all-time · <Link href="/campaigns" className="text-amber-800 underline">manage campaigns</Link></p>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`text-3xl font-bold ${socialScore >= 80 ? 'text-emerald-700' : socialScore >= 50 ? 'text-amber-700' : 'text-red-700'}`}>{socialScore}%</div>
+                <div className="flex-1">
+                  <div className="text-xs text-zinc-500">Profile score — {socialChkDone}/{socialChk} setup items</div>
+                  <div className="h-2 bg-zinc-100 rounded mt-1"><div className="h-2 bg-amber-600 rounded" style={{ width: `${socialScore}%` }} /></div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {socialSeries.slice(0, 6).map((sr, i) => {
+                  let day = ''; try { day = JSON.parse(sr.meta || '{}').day || ''; } catch {}
+                  return <span key={i} className="badge bg-amber-50 text-amber-800 !text-[9px]">{day.slice(0, 3)} · {sr.title}</span>;
+                })}
+              </div>
+              <p className="text-xs text-zinc-500">{socialIdeas} idea(s) in the bank · {campaigns.filter(c => c.status === 'POSTED').length} campaigns posted all-time · <Link href="/campaigns" className="text-amber-800 underline">campaigns</Link></p>
             </div>
           </div>
 

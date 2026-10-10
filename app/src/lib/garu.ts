@@ -9,7 +9,7 @@ export type GaruTip = { text: string; href?: string; level: 'urgent' | 'good' | 
 export async function garuInsights(orgId: string): Promise<GaruTip[]> {
   const now = new Date();
   const d1 = new Date(now.getTime() - 864e5), d5 = new Date(now.getTime() - 5 * 864e5), d7 = new Date(now.getTime() - 7 * 864e5);
-  const [pendingDrafts, overdueTasks, todaysViewings, openTasks, staleLeads, unknownConsent, campaignsWeek, wonCount, lostCount, onbPending, newLeads7, archived] = await Promise.all([
+  const [pendingDrafts, overdueTasks, todaysViewings, openTasks, staleLeads, unknownConsent, campaignsWeek, wonCount, lostCount, onbPending, newLeads7, archived, socialTotal, socialDone, ideaCount] = await Promise.all([
     prisma.message.count({ where: { orgId, status: 'APPROVAL_PENDING' } }),
     prisma.task.count({ where: { orgId, status: 'OPEN', dueAt: { lt: now } } }),
     prisma.appointment.findMany({ where: { orgId, startsAt: { gte: now }, status: { in: ['REQUESTED', 'CONFIRMED'] } }, orderBy: { startsAt: 'asc' }, take: 3, include: { lead: true } }),
@@ -21,7 +21,10 @@ export async function garuInsights(orgId: string): Promise<GaruTip[]> {
     prisma.lead.count({ where: { orgId, stage: 'LOST' } }),
     prisma.onboardingItem.count({ where: { orgId, done: false } }),
     prisma.lead.count({ where: { orgId, createdAt: { gte: d7 }, archivedAt: null } }),
-    prisma.lead.count({ where: { orgId, archivedAt: { not: null } } })
+    prisma.lead.count({ where: { orgId, archivedAt: { not: null } } }),
+    prisma.socialAsset.count({ where: { orgId, category: 'CHECKLIST' } }),
+    prisma.socialAsset.count({ where: { orgId, category: 'CHECKLIST', done: true } }),
+    prisma.socialAsset.count({ where: { orgId, category: 'IDEA' } })
   ]);
 
   const tips: GaruTip[] = [];
@@ -44,6 +47,10 @@ export async function garuInsights(orgId: string): Promise<GaruTip[]> {
   } else if (newLeads7 > 0) {
     tips.push({ text: `${newLeads7} new lead${newLeads7 > 1 ? 's' : ''} this week. First touch within an hour doubles reply rates — message them now.`, href: '/conversations', level: 'good' });
   }
+  if (socialTotal > 0 && socialDone < socialTotal) {
+    tips.push({ text: `Social Growth profile score is ${Math.round(100 * socialDone / socialTotal)}% — finish the remaining ${socialTotal - socialDone} profile items to get fully discovered in search.`, href: '/social', level: 'good' });
+  }
+  if (ideaCount > 0) tips.push({ text: `${ideaCount} idea${ideaCount > 1 ? 's' : ''} waiting in the Social idea bank — promote one to the campaign pipeline today.`, href: '/social', level: 'info' });
   if (tips.length === 0) tips.push({ text: 'Workspace is clean — no overdue tasks, no stale leads. Spend the quiet hour on outreach or a content campaign.', href: '/campaigns', level: 'info' });
   return tips.slice(0, 6);
 }
@@ -60,6 +67,7 @@ const RULES: { match: RegExp; answer: string }[] = [
   { match: /report|analytic|win rate|funnel/i, answer: 'Reports breaks down your funnel by stage, source and win rate with a weekly summary you can share with clients. The dashboard shows the live numbers.' },
   { match: /consent|privacy|stop|gdpr|dnd/i, answer: 'Consent is sacred here: leads with DENIED consent can never be messaged — the system blocks it with no exceptions. Leads can opt out; UNKNOWN means ask first.' },
   { match: /password|login|account|security/i, answer: 'Passwords are hashed (bcrypt), sessions are server-side, and every record is scoped to your workspace — clients can never see each other\'s data. Reset a password from the login page.' },
+  { match: /social|instagram|reel|hashtag|bio|pillar|content calendar|followers|growth engine/i, answer: 'The Social Growth Engine (sidebar → Social Growth) has your full system: profile optimization checklist with a live score, brand colours, 5 content pillars with % split, weekly content series, idea bank, hashtag sets, DM-to-lead funnels, the daily 30-minute routine and weekly KPIs. Promote ideas to the campaign pipeline when ready.' },
   { match: /property|listing|inventory/i, answer: 'Add your listings under Properties (type, price, bedrooms, area). The reply drafter uses them to match leads to real options in their budget automatically.' }
 ];
 

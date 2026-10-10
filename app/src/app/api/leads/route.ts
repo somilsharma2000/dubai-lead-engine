@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     ];
     const leads = await prisma.lead.findMany({ where, orderBy: { createdAt: 'desc' }, take: 200 });
     return NextResponse.json({ ok: true, leads });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' ? 401 : 403 }); }
+  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' || String((e as any).digest || '').startsWith('NEXT_REDIRECT') ? 401 : 403 }); }
 }
 
 export async function POST(req: NextRequest) {
@@ -48,6 +48,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, lead, workflows: wf });
   } catch (e: any) {
     if (e instanceof z.ZodError) return NextResponse.json({ ok: false, error: 'Invalid input: ' + e.issues[0].message }, { status: 400 });
-    return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' ? 401 : 403 });
+    return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' || String((e as any).digest || '').startsWith('NEXT_REDIRECT') ? 401 : 403 });
   }
 }

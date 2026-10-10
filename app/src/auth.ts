@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { prisma } from './db';
+import { redirect } from 'next/navigation';
 import { can } from './rbac';
 
 export const SESSION_COOKIE = 'sid';
@@ -46,7 +47,7 @@ export async function getCtx(): Promise<Ctx | null> {
 
 export async function requireCtx(): Promise<Ctx> {
   const ctx = await getCtx();
-  if (!ctx) throw new Error('UNAUTHENTICATED');
+  if (!ctx) redirect('/login'); // NEXT_REDIRECT: pages send visitors to login instead of a 500
   return ctx;
 }
 

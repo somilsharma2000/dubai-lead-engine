@@ -12,6 +12,7 @@ const CAN: Record<string, Role[]> = {
   'calendar.read':   ['OWNER','AGENCY_ADMIN','AGENCY_MEMBER','CLIENT_OWNER','CLIENT_MEMBER','ANALYST'],
   'calendar.write':  ['OWNER','AGENCY_ADMIN','AGENCY_MEMBER','CLIENT_OWNER','CLIENT_MEMBER'],
   'workflows.manage':['OWNER','AGENCY_ADMIN'],
+  'social.manage':   ['OWNER','AGENCY_ADMIN','CLIENT_OWNER'],
   'settings.read':   ['OWNER','AGENCY_ADMIN','CLIENT_OWNER','ANALYST'],
   'settings.write':  ['OWNER','CLIENT_OWNER'],
   'team.write':      ['OWNER','CLIENT_OWNER'],
