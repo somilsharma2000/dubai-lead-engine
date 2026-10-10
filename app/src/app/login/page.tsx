@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getCtx, verifyPassword } from '@/auth';
 import { prisma } from '@/db';
 import { loginAction, demoLoginAction } from './actions';
+import GaruScene from '@/components/GaruScene';
 
 export default async function Login({ searchParams }: { searchParams: { error?: string } }) {
   const ctx = await getCtx();
@@ -9,6 +10,7 @@ export default async function Login({ searchParams }: { searchParams: { error?: 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
+        <div className="mb-4 -mt-6"><GaruScene height={150} tips={['Hi! I am Garu, your workspace assistant.', 'I will watch your leads and nudge you at the right time.', 'Try the demo below — I will be waiting inside.']} /></div>
         <div className="text-center mb-6">
           <div className="text-2xl font-semibold">Growth OS</div>
           <div className="text-sm text-zinc-500">Real estate lead operations</div>

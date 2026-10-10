@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getCtx } from '@/auth';
 import { signupAction } from './actions';
+import GaruScene from '@/components/GaruScene';
 
 export default async function Signup() {
   const ctx = await getCtx();
@@ -8,6 +9,7 @@ export default async function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
+        <div className="mb-4 -mt-6"><GaruScene height={150} tips={['Welcome! I will set up your workspace.', 'Invite your team right after — links, no email needed.']} /></div>
         <div className="text-center mb-6">
           <div className="text-2xl font-semibold">Create your workspace</div>
           <div className="text-sm text-zinc-500">You become the Owner. Your organization is created with default workflows.</div>

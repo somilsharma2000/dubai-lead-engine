@@ -1,5 +1,11 @@
 # BUILD STATUS — Real Estate AI Growth OS
-Updated: 2026-10-10 (v7) — LIVE. BLOCKED placeholders replaced with working logic.
+Updated: 2026-10-10 (v8) — LIVE. Garu 3D mascot + premium dashboard.
+
+## v8 — Garu the mascot + assistant (2026-10-10)
+- GARU 3D (Three.js, no external models): baby-eagle mascot living in a 3D desk-world on the dashboard — table, laptop, mug, books, plant. Hops, flaps, pecks at the laptop, celebrates when clicked (raycast hit-testing, hover cursor).
+- GARU THE ASSISTANT: reads the real workspace and gives prioritized suggestions (NOW/DO/TIP: overdue tasks, drafts to approve, stale leads, upcoming viewings, consent gaps, win-rate coaching, campaign reminders). Speech bubble cycles tips; "Ask Garu" box answers questions (rule-based brain always on; LLM-upgraded when AI_API_KEY is set; grounded in live workspace facts). POST /api/garu/ask, session-guarded.
+- DASHBOARD REDESIGN: greeting hero, 6 KPI cards with week-over-week delta, 14-day new-leads SVG chart, pipeline funnel with deal-maturity coloring, lead source breakdown, upcoming viewings with Google/.ics links, coldest-leads watchlist, activity feed, content pipeline counters, setup progress — with Garu docked in the right rail.
+- Garu also greets visitors on the login and signup pages.
 
 ## v7 — "No more BLOCKED" (2026-10-10)
 Every BLOCKED placeholder deleted and replaced with a real working path:
