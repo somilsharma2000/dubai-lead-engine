@@ -1,7 +1,7 @@
 import { prisma } from './db';
 import { hashPassword } from './auth';
-import { computeLeadScore } from './score';
-import { seedDefaultWorkflows } from './workflow';
+import { computeLeadScore } from '@/lib/scoring';
+import { seedDefaultWorkflows } from '@/server/workflow-engine';
 
 // The client demo: one shared, always-ready workspace that a prospective
 // client can open with one click. Data is realistic but synthetic.

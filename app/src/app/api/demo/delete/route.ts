@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 export async function POST() {
   try {
@@ -8,5 +9,5 @@ export async function POST() {
     await prisma.lead.deleteMany({ where: { orgId: ctx.org.id, name: { startsWith: 'Demo —' } } });
     await prisma.property.deleteMany({ where: { orgId: ctx.org.id, title: { startsWith: 'Demo —' } } });
     return NextResponse.json({ ok: true });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

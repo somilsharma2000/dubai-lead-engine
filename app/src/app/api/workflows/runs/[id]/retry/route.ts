@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requirePerm } from '@/auth';
-import { retryRun } from '@/workflow';
+import { requirePerm } from '@/server/auth';
+import { retryRun } from '@/server/workflow-engine';
 
 export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   try {

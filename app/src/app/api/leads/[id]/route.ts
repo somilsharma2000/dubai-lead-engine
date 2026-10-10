@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
-import { computeLeadScore } from '@/score';
-import { handleEvent } from '@/workflow';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { computeLeadScore } from '@/lib/scoring';
+import { handleEvent } from '@/server/workflow-engine';
+import { apiFail } from '@/server/api';
 
 // Tenant isolation: lookup is ALWAYS scoped to ctx.org.id — cross-org ids return 404.
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
@@ -12,7 +13,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     const lead = await prisma.lead.findFirst({ where: { id: params.id, orgId: ctx.org.id }, include: { notes: true, tasks: true, messages: { orderBy: { createdAt: "asc" } } } });
     if (!lead) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     return NextResponse.json({ ok: true, lead });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
@@ -40,6 +41,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ ok: true, lead: updated });
   } catch (e: any) {
     if (e instanceof z.ZodError) return NextResponse.json({ ok: false, error: 'Invalid input' }, { status: 400 });
-    return NextResponse.json({ ok: false, error: e.message }, { status: 403 });
+    return apiFail(e);
   }
 }

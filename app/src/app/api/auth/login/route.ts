@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { verifyPassword, createSession } from '@/auth';
+import { prisma } from '@/server/db';
+import { verifyPassword, createSession } from '@/server/auth';
 
 export async function POST(req: NextRequest) {
   try {

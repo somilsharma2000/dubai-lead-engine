@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
-import { computeLeadScore } from '@/score';
-import { handleEvent } from '@/workflow';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { computeLeadScore } from '@/lib/scoring';
+import { handleEvent } from '@/server/workflow-engine';
+import { apiFail } from '@/server/api';
 
 // Clearly-labelled demo data so a new team can see the product working.
 // Names carry the "Demo" prefix. Delete with one button on the dashboard.
@@ -28,5 +29,5 @@ export async function POST() {
     ]});
     await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'demo.loaded', entity: 'Organization', entityId: ctx.org.id, meta: JSON.stringify({ note: 'Demo data — not real leads' }) } });
     return NextResponse.json({ ok: true });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

@@ -1,8 +1,8 @@
 // GARU'S BRAIN — the in-app assistant. Reads the real workspace data and gives
 // prioritized suggestions, tips and answers. Rule-based always works; an AI key
 // (AI_API_KEY) upgrades free-form answers automatically.
-import { prisma } from '@/db';
-import { llmDraft, aiConfigured } from '@/lib/ai';
+import { prisma } from '@/server/db';
+import { llmDraft, aiConfigured } from '@/server/ai';
 
 export type GaruTip = { text: string; href?: string; level: 'urgent' | 'good' | 'info' };
 

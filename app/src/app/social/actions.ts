@@ -1,7 +1,7 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
 import { buildScript } from '@/lib/social';
 
 async function own(id: string) {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requirePerm } from '@/auth';
-import { prisma } from '@/db';
+import { requirePerm } from '@/server/auth';
+import { prisma } from '@/server/db';
 
 function icsDate(d: Date) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
 

@@ -1,4 +1,4 @@
-import { requireCtx } from '@/auth';
+import { requireCtx } from '@/server/auth';
 
 // HONEST status page. Nothing is connected until credentials are provided.
 const INTEGRATIONS = [

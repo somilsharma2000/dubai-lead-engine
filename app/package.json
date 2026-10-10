@@ -9,7 +9,7 @@
     "db:push": "prisma db push",
     "smoke": "node scripts/smoke.mjs",
     "setup": "prisma migrate deploy && prisma generate && node scripts/seed.mjs",
-    "clickbot": "node scripts/clickbot.mjs",
+    "clickbot": "node tools/dev/clickbot.mjs",
     "security": "node scripts/security.mjs",
     "features": "node scripts/features.mjs"
   },

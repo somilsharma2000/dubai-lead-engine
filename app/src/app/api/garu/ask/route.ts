@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requireCtx } from '@/auth';
-import { garuAnswer } from '@/lib/garu';
+import { requireCtx } from '@/server/auth';
+import { garuAnswer } from '@/server/garu';
 
 export async function POST(req: Request) {
   try {

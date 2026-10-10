@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createSession } from '@/auth';
-import { ensureDemoWorkspace } from '@/demo';
+import { createSession } from '@/server/auth';
+import { ensureDemoWorkspace } from '@/server/demo';
 
 // One-click demo login for clients and testing.
 export async function POST() {

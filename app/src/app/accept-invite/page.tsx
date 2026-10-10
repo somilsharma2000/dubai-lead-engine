@@ -1,4 +1,4 @@
-import { prisma } from '@/db';
+import { prisma } from '@/server/db';
 import { acceptInviteAction } from '@/app/actions';
 
 export default async function AcceptInvite({ searchParams }: { searchParams: { token?: string; error?: string } }) {

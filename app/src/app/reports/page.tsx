@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
 
 const fmtMoney = (n: number, cur: string) => new Intl.NumberFormat('en', { style: 'currency', currency: cur || 'USD', maximumFractionDigits: 0 }).format(n);
 

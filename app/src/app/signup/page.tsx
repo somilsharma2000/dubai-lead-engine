@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
-import { getCtx } from '@/auth';
+import { getCtx } from '@/server/auth';
 import { signupAction } from './actions';
-import GaruScene from '@/components/GaruScene';
+import GaruScene from '@/components/garu/GaruScene';
 
 export default async function Signup() {
   const ctx = await getCtx();

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 // Full workspace backup: every table scoped to the caller's org, as one JSON file.
 // Disaster-recovery safeguard — data should never live in only one place.
@@ -31,7 +32,5 @@ export async function GET() {
     return new NextResponse(JSON.stringify(backup, null, 2), {
       headers: { 'Content-Type': 'application/json', 'Content-Disposition': `attachment; filename="workspace-backup-${org?.slug || orgId}-${stamp}.json"` },
     });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 403 });
-  }
+  } catch (e) { return apiFail(e); }
 }

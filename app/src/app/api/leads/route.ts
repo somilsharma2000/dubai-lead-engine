@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
-import { computeLeadScore } from '@/score';
-import { handleEvent } from '@/workflow';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { computeLeadScore } from '@/lib/scoring';
+import { handleEvent } from '@/server/workflow-engine';
+import { apiFail } from '@/server/api';
 
 const leadSchema = z.object({
   name: z.string().min(2),
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
     ];
     const leads = await prisma.lead.findMany({ where, orderBy: { createdAt: 'desc' }, take: 200 });
     return NextResponse.json({ ok: true, leads });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' || String((e as any).digest || '').startsWith('NEXT_REDIRECT') ? 401 : 403 }); }
+  } catch (e) { return apiFail(e); }
 }
 
 export async function POST(req: NextRequest) {
@@ -48,6 +49,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, lead, workflows: wf });
   } catch (e: any) {
     if (e instanceof z.ZodError) return NextResponse.json({ ok: false, error: 'Invalid input: ' + e.issues[0].message }, { status: 400 });
-    return NextResponse.json({ ok: false, error: e.message }, { status: e.message === 'UNAUTHENTICATED' || String((e as any).digest || '').startsWith('NEXT_REDIRECT') ? 401 : 403 });
+    return apiFail(e);
   }
 }

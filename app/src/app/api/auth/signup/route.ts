@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { hashPassword, createSession, adminEmails, logAudit } from '@/auth';
-import { seedDefaultWorkflows } from '@/workflow';
+import { prisma } from '@/server/db';
+import { hashPassword, createSession, adminEmails, logAudit } from '@/server/auth';
+import { seedDefaultWorkflows } from '@/server/workflow-engine';
 
 const schema = z.object({
   name: z.string().min(2), email: z.string().email(), password: z.string().min(8),

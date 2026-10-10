@@ -1,5 +1,5 @@
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
 import { ensureSocialLibrary, FORMATS, DM_SCRIPTS, ROUTINE, HOOKS, CTAS, REPURPOSING, CADENCE, COMPLIANCE } from '@/lib/social';
 import {
   socialToggleAction, socialAddAction, socialDeleteAction, socialWeightAction,

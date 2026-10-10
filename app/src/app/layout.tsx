@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { getCtx } from '@/auth';
+import { getCtx } from '@/server/auth';
 import { logoutAction, resetDemoAction } from './actions';
 import Link from 'next/link';
 

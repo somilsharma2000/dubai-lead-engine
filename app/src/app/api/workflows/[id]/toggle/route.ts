@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm, logAudit } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm, logAudit } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -10,5 +11,5 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     const updated = await prisma.workflow.update({ where: { id: wf.id }, data: { enabled: !wf.enabled } });
     await logAudit(ctx.user.id, ctx.org.id, 'workflow.toggled', wf.name, { enabled: updated.enabled });
     return NextResponse.json({ ok: true, enabled: updated.enabled });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

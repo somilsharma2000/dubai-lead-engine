@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
+import { prisma } from '@/server/db';
 
 // Public health probe: safe, no sensitive data. Returns DB connectivity + counts.
 export async function GET() {

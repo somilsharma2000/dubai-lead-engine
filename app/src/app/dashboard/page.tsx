@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
 import { loadDemoAction, clearDemoAction } from '../actions';
-import { garuInsights } from '@/lib/garu';
-import GaruAssistant from '@/components/GaruAssistant';
+import { garuInsights } from '@/server/garu';
+import GaruAssistant from '@/components/garu/GaruAssistant';
 import { ensureSocialLibrary } from '@/lib/social';
 
 const fmtMoney = (n: number, cur: string) => new Intl.NumberFormat('en', { style: 'currency', currency: cur || 'USD', maximumFractionDigits: 0 }).format(n);

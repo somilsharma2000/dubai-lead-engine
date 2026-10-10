@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { computeLeadScore } from '@/score';
+import { prisma } from '@/server/db';
+import { computeLeadScore } from '@/lib/scoring';
 
 // PUBLIC lead capture: the marketing site form posts here.
 // Lands in the "Lead Engine HQ" org so every website inquiry is in the CRM.

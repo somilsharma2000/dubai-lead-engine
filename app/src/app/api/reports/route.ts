@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 // Money report: funnel, sources, and stated-budget revenue of WON leads.
 // Formulas documented in docs/PRODUCT_REQUIREMENTS.md.
@@ -38,5 +39,5 @@ export async function GET() {
         note: 'Revenue = sum of stated budgets of WON leads (client-declared, not verified transactions)'
       }
     });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

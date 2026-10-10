@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
-import { computeLeadScore } from '@/score';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
+import { computeLeadScore } from '@/lib/scoring';
 import { updateLeadAction } from '../../actions';
 
 export default async function LeadDetail({ params }: { params: { id: string } }) {

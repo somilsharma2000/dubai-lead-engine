@@ -1,5 +1,5 @@
-import { prisma } from '@/db';
-import { getCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { getCtx } from '@/server/auth';
 import { redirect } from 'next/navigation';
 import { createProspectAction, updateProspectAction } from '../../actions';
 

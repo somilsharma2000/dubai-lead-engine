@@ -1,4 +1,4 @@
-import { requireCtx } from '@/auth';
+import { requireCtx } from '@/server/auth';
 import { createLeadAction } from '../../actions';
 
 export default async function NewLead() {

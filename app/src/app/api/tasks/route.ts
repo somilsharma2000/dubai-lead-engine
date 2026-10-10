@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
       orderBy: { dueAt: 'asc' }, take: 200
     });
     return NextResponse.json({ ok: true, tasks });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }
 
 export async function POST(req: NextRequest) {
@@ -27,6 +28,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, task });
   } catch (e: any) {
     if (e instanceof z.ZodError) return NextResponse.json({ ok: false, error: 'Invalid input: ' + e.issues[0].message }, { status: 400 });
-    return NextResponse.json({ ok: false, error: e.message }, { status: 403 });
+    return apiFail(e);
   }
 }

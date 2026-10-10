@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,5 +15,5 @@ export async function GET(req: NextRequest) {
     const rows = leads.map(l => cols.map(c => esc((l as any)[c])).join(','));
     const csv = cols.join(',') + '\n' + rows.join('\n');
     return new NextResponse(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': 'attachment; filename="leads.csv"' } });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

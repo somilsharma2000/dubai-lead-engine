@@ -1,5 +1,6 @@
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { config, emailConfigured } from '@/config';
+import { requireCtx } from '@/server/auth';
 import { updateOrgAction, inviteMemberAction, toggleOnboardingAction } from '../actions';
 
 
@@ -44,12 +45,12 @@ export default async function Settings() {
             </select></div>
           <button className="btn-gold text-xs">Invite</button>
         </form>
-        <p className="text-xs text-zinc-400 mt-2">Invites create a personal activation link (valid 7 days) — share it on WhatsApp or email. {process.env.RESEND_API_KEY ? 'Email delivery is live.' : 'Connect an email key on Integrations and invites also send by email automatically.'}</p>
+        <p className="text-xs text-zinc-400 mt-2">Invites create a personal activation link (valid 7 days) — share it on WhatsApp or email. {emailConfigured() ? 'Email delivery is live.' : 'Connect an email key on Integrations and invites also send by email automatically.'}</p>
         {invites.length > 0 && (
           <div className="mt-3 space-y-1 text-xs">
             <div className="font-medium text-zinc-500">Pending invitations:</div>
             {invites.map(inv => {
-              const url = `${process.env.APP_URL || 'http://localhost:3000'}/accept-invite?token=${inv.token}`;
+              const url = `${config.app.url}/accept-invite?token=${inv.token}`;
               return (
                 <div key={inv.id} className="flex items-center gap-2 flex-wrap">
                   <span className="text-zinc-600">{inv.email} ({inv.role.replace('_', ' ')})</span>

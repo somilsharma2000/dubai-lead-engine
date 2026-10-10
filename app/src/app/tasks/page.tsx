@@ -1,5 +1,5 @@
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
 import { createTaskAction, completeTaskAction } from '../actions';
 
 export default async function Tasks() {

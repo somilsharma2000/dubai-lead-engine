@@ -1,5 +1,5 @@
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
 import { toggleWorkflowAction, retryRunAction } from '../actions';
 
 export default async function Workflows() {

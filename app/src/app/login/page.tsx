@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
-import { getCtx, verifyPassword } from '@/auth';
-import { prisma } from '@/db';
+import { getCtx, verifyPassword } from '@/server/auth';
+import { prisma } from '@/server/db';
 import { loginAction, demoLoginAction } from './actions';
-import GaruScene from '@/components/GaruScene';
+import GaruScene from '@/components/garu/GaruScene';
 
 export default async function Login({ searchParams }: { searchParams: { error?: string } }) {
   const ctx = await getCtx();

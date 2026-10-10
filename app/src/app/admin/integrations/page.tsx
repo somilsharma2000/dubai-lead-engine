@@ -1,7 +1,7 @@
-import { prisma } from '@/db';
-import { getCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { getCtx } from '@/server/auth';
 import { redirect } from 'next/navigation';
-import { PROVIDERS } from '@/integrations';
+import { PROVIDERS } from '@/server/integrations';
 import { saveIntegrationAction } from '../../actions';
 
 export default async function AdminIntegrations() {

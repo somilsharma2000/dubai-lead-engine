@@ -1,6 +1,6 @@
 // SOCIAL GROWTH LIBRARY — the specialist's knowledge base, seeded per workspace.
 // Key-based idempotent seeding: new library items automatically appear for existing orgs.
-import { prisma } from '@/db';
+import { prisma } from '@/server/db';
 
 type Row = { key: string; title: string; detail?: string; meta?: object; sortOrder?: number };
 

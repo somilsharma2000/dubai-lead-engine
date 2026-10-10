@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { prisma } from '@/db';
-import { waLink, cloudConfigured } from '@/lib/whatsapp';
-import { aiConfigured } from '@/lib/ai';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { waLink, cloudConfigured } from '@/server/whatsapp';
+import { aiConfigured } from '@/server/ai';
+import { requireCtx } from '@/server/auth';
 import { sendManualMessageAction, draftReplyAction, approveMessageAction, toggleBotAction } from '../../actions';
 
 export default async function Thread({ params }: { params: { id: string } }) {

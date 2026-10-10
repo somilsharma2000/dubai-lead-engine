@@ -1,4 +1,4 @@
-import { getCtx } from '@/auth';
+import { getCtx } from '@/server/auth';
 import { redirect } from 'next/navigation';
 
 // The service catalog we sell — what each category does and how the client uses it.

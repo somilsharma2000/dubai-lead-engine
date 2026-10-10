@@ -1,9 +1,9 @@
 'use server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { prisma } from '@/db';
-import { hashPassword, createSession, adminEmails } from '@/auth';
-import { seedDefaultWorkflows } from '@/workflow';
+import { prisma } from '@/server/db';
+import { hashPassword, createSession, adminEmails } from '@/server/auth';
+import { seedDefaultWorkflows } from '@/server/workflow-engine';
 
 export async function signupAction(fd: FormData) {
   const raw = { name: fd.get('name'), email: fd.get('email'), password: fd.get('password'), orgName: fd.get('orgName'), country: fd.get('country'), currency: fd.get('currency') };

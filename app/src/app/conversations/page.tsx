@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { prisma } from '@/db';
-import { requireCtx } from '@/auth';
+import { prisma } from '@/server/db';
+import { requireCtx } from '@/server/auth';
 
 export default async function Conversations() {
   const ctx = await requireCtx();

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm, logAudit } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm, logAudit } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 export async function GET() {
   try {
@@ -11,5 +12,5 @@ export async function GET() {
     });
     await logAudit(ctx.user.id, null, 'admin.orgs.listed', 'all');
     return NextResponse.json({ ok: true, orgs });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

@@ -1,3 +1,4 @@
+import { config } from '@/config';
 import { cookies } from 'next/headers';
 import { randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
@@ -14,7 +15,7 @@ export type Ctx = {
 
 export function hashPassword(pw: string) { return bcrypt.hashSync(pw, 10); }
 export function verifyPassword(pw: string, hash: string) { return bcrypt.compareSync(pw, hash); }
-export function adminEmails(): string[] { return (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean); }
+export function adminEmails(): string[] { return config.admin.emails; }
 
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString('hex');

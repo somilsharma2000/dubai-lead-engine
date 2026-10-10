@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/db';
-import { requirePerm } from '@/auth';
+import { prisma } from '@/server/db';
+import { requirePerm } from '@/server/auth';
+import { apiFail } from '@/server/api';
 
 // Every metric has a defined formula (see docs/PRODUCT_REQUIREMENTS.md).
 export async function GET() {
@@ -42,5 +43,5 @@ export async function GET() {
       pendingDrafts,
       activity: activities
     });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e.message }, { status: 403 }); }
+  } catch (e) { return apiFail(e); }
 }

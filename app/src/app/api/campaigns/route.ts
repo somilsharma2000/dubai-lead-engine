@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requirePerm } from '@/auth';
-import { prisma } from '@/db';
+import { requirePerm } from '@/server/auth';
+import { prisma } from '@/server/db';
 import { createCampaignAction, updateCampaignAction, deleteCampaignAction } from '@/app/actions';
 
 function fd(pairs: Record<string, string>) {

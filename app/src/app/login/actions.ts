@@ -1,7 +1,7 @@
 'use server';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/db';
-import { verifyPassword, createSession } from '@/auth';
+import { prisma } from '@/server/db';
+import { verifyPassword, createSession } from '@/server/auth';
 
 export async function loginAction(fd: FormData) {
   const email = String(fd.get('email') || '').toLowerCase();
@@ -11,7 +11,7 @@ export async function loginAction(fd: FormData) {
   await createSession(user.id);
   redirect('/dashboard');
 }
-import { ensureDemoWorkspace } from '@/demo';
+import { ensureDemoWorkspace } from '@/server/demo';
 
 // One-click client demo login (shared demo workspace, synthetic data).
 export async function demoLoginAction() {
