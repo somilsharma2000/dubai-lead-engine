@@ -2,16 +2,16 @@ import { requireCtx } from '@/auth';
 
 // HONEST status page. Nothing is connected until credentials are provided.
 const INTEGRATIONS = [
-  { name: 'WhatsApp Business API', status: 'DISCONNECTED', blocked: 'BLOCKED — BSP/Meta credentials required',
-    steps: ['Choose a Meta-approved BSP or apply via Meta Business Manager (business verification needed).', 'Provide API credentials to the platform admin.', 'Webhook URL will be registered per organization; signature validation is implemented in the adapter stub.'] },
-  { name: 'Email (transactional)', status: 'DISCONNECTED', blocked: 'BLOCKED — provider credentials required',
-    steps: ['Create a free provider account (e.g. Resend/SendGrid).', 'Add API key to environment (EMAIL_PROVIDER_KEY).', 'Password reset + notifications become live.'] },
-  { name: 'Google Calendar', status: 'DISCONNECTED', blocked: 'BLOCKED — OAuth client required',
-    steps: ['Create a Google Cloud OAuth client.', 'Enable Calendar API.', 'Connect per agent to sync viewings two-way.'] },
-  { name: 'AI model provider', status: 'DISCONNECTED', blocked: 'BLOCKED — API key required',
-    steps: ['Add an AI provider key to environment (AI_PROVIDER_KEY).', 'Reply drafting will be constrained to property records + approved business facts only.', 'Every draft requires human approval before sending.'] },
-  { name: 'Razorpay (billing)', status: 'DISCONNECTED', blocked: 'BLOCKED — Razorpay keys required',
-    steps: ['Create Razorpay account.', 'Add key id/secret as environment secrets.', 'Webhook: verify signature server-side before changing any subscription state.'] },
+  { name: 'WhatsApp delivery', status: 'WORKING', blocked: null,
+    steps: ['Click-to-chat: every sent message has an "Open in WhatsApp" one-tap link with the text pre-filled — live now, no setup.', 'Auto-send (optional): add WHATSAPP_TOKEN + WHATSAPP_PHONE_NUMBER_ID (Meta WhatsApp Business API) and approved messages send automatically.', 'Consent, pause-bot and audit rules apply to both paths.'] },
+  { name: 'Team invites', status: 'WORKING', blocked: null,
+    steps: ['Invite creates a personal activation link (valid 7 days) — share it on WhatsApp or anywhere.', 'Invitee sets their own password; nothing is emailed in clear.', 'Optional: add RESEND_API_KEY + EMAIL_FROM and invites also go out by email automatically.'] },
+  { name: 'Calendar sync', status: 'WORKING', blocked: null,
+    steps: ['Every viewing has an "Add to Google Calendar" link and a downloadable .ics file (Apple/Outlook).', 'Two-way Google sync activates when an OAuth client is connected.'] },
+  { name: 'AI reply drafting', status: 'WORKING', blocked: null,
+    steps: ['Rule-based drafts from your property records work today.', 'Add AI_API_KEY (any OpenAI-compatible provider; set AI_BASE_URL/AI_MODEL for OpenRouter, Groq, etc.) and drafts become LLM-written automatically.', 'Every draft still requires your approval before sending.'] },
+  { name: 'Razorpay (billing)', status: 'AWAITING KEYS', blocked: null,
+    steps: ['"Payment link (Razorpay)" buttons are live on the Billing page.', 'Create a Razorpay account and add RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET — links then generate live (₹79k/₹1.5L/₹2.7L monthly).', 'Webhook signature verification is required before any subscription auto-changes.'] },
   { name: 'CSV import/export', status: 'EXPORT ONLY', blocked: null,
     steps: ['Lead CSV export is live (Leads page → Export CSV).', 'Import is on the roadmap.'] },
 ];

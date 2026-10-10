@@ -10,7 +10,8 @@
     "smoke": "node scripts/smoke.mjs",
     "setup": "prisma migrate deploy && prisma generate && node scripts/seed.mjs",
     "clickbot": "node scripts/clickbot.mjs",
-    "security": "node scripts/security.mjs"
+    "security": "node scripts/security.mjs",
+    "features": "node scripts/features.mjs"
   },
   "dependencies": {
     "@prisma/client": "5.20.0",

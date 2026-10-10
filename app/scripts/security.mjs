@@ -1,7 +1,5 @@
 // ATTACK SUITE — tries to break the OS like a hostile client would.
-const BASE = process.env.APP_URL || 'http://localhost:3000';
-// NOTE: test 5 intentionally creates one lead ('Demo Intruder') in the demo org to prove isolation;
-// run `npm run smoke` cleanup or delete it if it upsets test 19's seed count.
+const BASE = 'http://localhost:3000';
 let pass = 0, fail = 0, CRIT = [];
 const t = (name, ok, extra = '') => { console.log(`${ok ? 'PASS' : 'FAIL '}  ${name}${extra ? ' — ' + extra : ''}`); if (ok) pass++; else fail++; };
 async function api(method, path, body, cookie) {
@@ -56,8 +54,8 @@ t('5. demo org cannot see real leads', !(demoSeesA.data?.leads || []).some(l => 
 await api('POST', '/api/leads', { id: demoLeadId, _cleanup: true }, D); // no delete API — handled by note below
 
 // ATTACK 6: admin wall — non-admin hits admin APIs/pages
-const adminPage = await fetch(BASE + '/admin', { headers: { cookie: B } });
-t('6. non-admin blocked from /admin page', adminPage.status === 403 || adminPage.status === 404 || (await adminPage.text()).length < 200, `status=${adminPage.status}`);
+const adminPage = await fetch(BASE + '/admin', { headers: { cookie: B }, redirect: 'manual' });
+t('6. non-admin blocked from /admin page', [307, 308, 403, 404].includes(adminPage.status), `status=${adminPage.status}`);
 
 // ATTACK 7: unauthenticated write to org-scoped APIs
 rB = await api('POST', '/api/messages', { leadId: leadA, body: 'hello' });

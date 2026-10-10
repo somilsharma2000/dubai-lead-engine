@@ -1,6 +1,8 @@
 'use server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { cloudSend, cloudConfigured } from '@/lib/whatsapp';
+import { llmDraft, aiConfigured } from '@/lib/ai';
 import { prisma } from '@/db';
 import { getCtx, requirePerm, destroySession, hashPassword, logAudit } from '@/auth';
 import { computeLeadScore } from '@/score';
@@ -139,13 +141,35 @@ export async function retryRunAction(fd: FormData) {
 export async function inviteMemberAction(fd: FormData) {
   const ctx = await requirePerm('team.write');
   const email = (S(fd, 'email') || '').toLowerCase();
-  const name = S(fd, 'name') || email.split('@')[0];
   const role = S(fd, 'role') || 'AGENCY_MEMBER';
-  let user = await prisma.user.findUnique({ where: { email } });
-  if (!user) user = await prisma.user.create({ data: { email, name, passwordHash: hashPassword(Math.random().toString(36) + 'ChangeMe1!') } });
-  await prisma.membership.upsert({ where: { userId_orgId: { userId: user.id, orgId: ctx.org.id } }, create: { userId: user.id, orgId: ctx.org.id, role }, update: { role } });
+  if (!email || !email.includes('@')) return;
+  // remove stale invitation for the same email, then create a fresh token
+  await prisma.invitation.deleteMany({ where: { orgId: ctx.org.id, email, acceptedAt: null } });
+  const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '').slice(0, 8);
+  await prisma.invitation.create({ data: { orgId: ctx.org.id, email, role, token, expiresAt: new Date(Date.now() + 7 * 864e5) } });
+  // Real email delivery when a provider key exists; otherwise the shareable link is shown in Settings.
+  if (process.env.RESEND_API_KEY) {
+    const base = process.env.APP_URL || 'http://localhost:3000';
+    try { await fetch('https://api.resend.com/emails', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.RESEND_API_KEY}` }, body: JSON.stringify({ from: process.env.EMAIL_FROM || 'onboarding@resend.dev', to: email, subject: `You're invited to ${ctx.org.name}`, html: `<p>${ctx.org.name} invited you to join their workspace.</p><p><a href="${base}/accept-invite?token=${token}">Accept invitation</a> (valid 7 days)</p>` }) }); } catch {}
+  }
   await logAudit(ctx.user.id, ctx.org.id, 'team.member_invited', email, { role });
   revalidatePath('/settings');
+}
+
+// Accept an invitation: sets a real password chosen by the invitee. Fully working without email.
+export async function acceptInviteAction(fd: FormData) {
+  const token = S(fd, 'token')!;
+  const password = S(fd, 'password')!;
+  const name = S(fd, 'name');
+  const inv = await prisma.invitation.findUnique({ where: { token } });
+  if (!inv || inv.acceptedAt || inv.expiresAt < new Date()) redirect('/accept-invite?error=expired');
+  if (!password || password.length < 8) redirect('/accept-invite?token=' + token + '&error=weak');
+  let user = await prisma.user.findUnique({ where: { email: inv.email } });
+  if (!user) user = await prisma.user.create({ data: { email: inv.email, name: name || inv.email.split('@')[0], passwordHash: hashPassword(password) } });
+  else await prisma.user.update({ where: { id: user.id }, data: { passwordHash: hashPassword(password), ...(name ? { name } : {}) } });
+  await prisma.membership.upsert({ where: { userId_orgId: { userId: user.id, orgId: inv.orgId } }, create: { userId: user.id, orgId: inv.orgId, role: inv.role }, update: { role: inv.role } });
+  await prisma.invitation.update({ where: { id: inv.id }, data: { acceptedAt: new Date() } });
+  redirect('/login?welcome=1');
 }
 
 export async function updateOrgAction(fd: FormData) {
@@ -255,12 +279,29 @@ export async function draftReplyAction(fd: FormData) {
     where: { orgId: ctx.org.id, status: 'ACTIVE', price: lead.budgetMax ? { lte: lead.budgetMax * 1.05 } : undefined },
     take: 2
   });
-  const lines = [`Hi ${lead.name.split(' ')[0]}, thanks for reaching out about ${lead.intent === 'BUY' ? 'buying' : 'renting'}.`];
-  if (props.length) lines.push(`I have ${props.length} matching option${props.length > 1 ? 's' : ''} in your budget${lead.city ? ` in ${lead.city}` : ''} — shall I send details or book a viewing this week?`);
-  else lines.push('Could you share your budget and preferred area? I will send you the best current options.');
-  if (lead.consent === 'UNKNOWN') lines.push('(If you prefer, reply STOP and we will not message again.)');
+  let body: string | null = null;
+  let source = 'RULE_DRAFT';
+  if (aiConfigured()) {
+    const context = [
+      `Lead: ${lead.name}. Intent: ${lead.intent}. Budget max: ${lead.budgetMax ?? 'unknown'}. City: ${lead.city ?? 'unknown'}. Stage: ${lead.stage}.`,
+      props.length ? `Matching properties: ${props.map(p => `${p.title} in ${p.area || p.city || 'the city'} at ${p.price}`).join('; ')}.` : 'No matching properties in records.',
+      'Recent note: ' + (lead.notes?.[lead.notes.length - 1]?.body || 'none')
+    ].join('\n');
+    body = await llmDraft(
+      `You are a real estate agent's WhatsApp assistant. Write a short (2-4 sentence), warm reply to the lead. Use ONLY the facts provided. Never invent properties, prices or promises. End with a question that moves the lead toward a viewing or a budget answer. No emojis.`,
+      context
+    );
+    if (body) source = 'AI_DRAFT';
+  }
+  if (!body) {
+    const lines = [`Hi ${lead.name.split(' ')[0]}, thanks for reaching out about ${lead.intent === 'BUY' ? 'buying' : 'renting'}.`];
+    if (props.length) lines.push(`I have ${props.length} matching option${props.length > 1 ? 's' : ''} in your budget${lead.city ? ` in ${lead.city}` : ''} — shall I send details or book a viewing this week?`);
+    else lines.push('Could you share your budget and preferred area? I will send you the best current options.');
+    if (lead.consent === 'UNKNOWN') lines.push('(If you prefer, reply STOP and we will not message again.)');
+    body = lines.join(' ');
+  }
   await prisma.message.create({
-    data: { orgId: ctx.org.id, leadId, direction: 'OUT', body: lines.join(' '), status: 'APPROVAL_PENDING', source: 'RULE_DRAFT' }
+    data: { orgId: ctx.org.id, leadId, direction: 'OUT', body, status: 'APPROVAL_PENDING', source }
   });
   await recordUsage(ctx.org.id, 'drafts.rule_based');
   revalidatePath(`/conversations/${leadId}`);
@@ -278,6 +319,15 @@ export async function approveMessageAction(fd: FormData) {
   if (decision === 'SEND') {
     await prisma.message.update({ where: { id: messageId }, data: { status: 'SENT' } });
     await recordUsage(ctx.org.id, 'messages.approved');
+    // Real auto-send via WhatsApp Cloud API when configured; otherwise the
+    // click-to-chat link in the UI delivers the same message in one tap.
+    if (cloudConfigured() && lead.phone) {
+      const r = await cloudSend(lead.phone, msg.body);
+      if (r.ok) {
+        await prisma.message.update({ where: { id: messageId }, data: { source: msg.source + '+CLOUD_DELIVERED' } });
+        await recordUsage(ctx.org.id, 'messages.delivered_cloud');
+      }
+    }
   } else {
     await prisma.message.delete({ where: { id: messageId } });
   }
@@ -354,3 +404,36 @@ export async function resetDemoAction() {
   await resetDemoWorkspace();
   revalidatePath('/dashboard');
 }
+
+// === Razorpay billing: real payment links (activates with RAZORPAY_KEY_ID/SECRET) ===
+const INR: Record<string, number> = { LEAD_ENGINE: 79000, LEAD_MACHINE: 150000, MARKET_DOMINATION: 270000 };
+export async function createRazorpayLinkAction(fd: FormData) {
+  const ctx = await requirePerm('settings.write');
+  const pkg = S(fd, 'pkg')!;
+  if (!INR[pkg]) return;
+  const keyId = process.env.RAZORPAY_KEY_ID, keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) {
+    await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'payment.link_blocked', entity: 'Billing', meta: 'Razorpay keys not configured' } });
+    revalidatePath('/billing');
+    return;
+  }
+  const res = await fetch('https://api.razorpay.com/v1/payment_links', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Basic ' + Buffer.from(keyId + ':' + keySecret).toString('base64') },
+    body: JSON.stringify({
+      amount: INR[pkg] * 100, currency: 'INR',
+      description: `${pkg.replace('_', ' ')} monthly subscription`,
+      customer: { name: ctx.org.name, email: ctx.user.email },
+      notes: { orgId: ctx.org.id, package: pkg },
+      notify: { sms: false, email: true }
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.ok && (data as any)?.short_url) {
+    await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'payment.link_created', entity: 'Billing', meta: (data as any).short_url } });
+  } else {
+    await prisma.activity.create({ data: { orgId: ctx.org.id, userId: ctx.user.id, type: 'payment.link_failed', entity: 'Billing', meta: ((data as any)?.error?.description || 'unknown') + '' } });
+  }
+  revalidatePath('/billing');
+}
+

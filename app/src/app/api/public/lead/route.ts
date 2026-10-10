@@ -33,11 +33,17 @@ export async function POST(req: Request) {
   // honeypot: bots fill hidden field
   if (data.website) return cors(NextResponse.json({ ok: true })); // silently drop
 
-  const name = String(data.name || '').trim().slice(0, 80);
-  const phone = String(data.phone || '').trim().slice(0, 30);
-  const need = String(data.need || '').slice(0, 200);
-  const agency = String(data.agency || '').slice(0, 80);
-  if (name.length < 2 || phone.length < 6) {
+  // hard type validation: reject objects/arrays/numbers outright, and non-numeric phones
+  if (typeof data.name !== 'string' || typeof data.phone !== 'string' ||
+      typeof data.need !== 'undefined' && typeof data.need !== 'string' ||
+      typeof data.agency !== 'undefined' && typeof data.agency !== 'string') {
+    return cors(NextResponse.json({ ok: false, error: 'Invalid submission' }, { status: 400 }));
+  }
+  const name = data.name.trim().slice(0, 80);
+  const phone = data.phone.trim().slice(0, 30);
+  const need = (data.need || '').slice(0, 200);
+  const agency = (data.agency || '').slice(0, 80);
+  if (name.length < 2 || !/^[+0-9][0-9 ()-]{5,29}$/.test(phone)) {
     return cors(NextResponse.json({ ok: false, error: 'Name and WhatsApp number are required' }, { status: 400 }));
   }
 

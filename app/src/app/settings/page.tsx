@@ -6,6 +6,7 @@ import { updateOrgAction, inviteMemberAction, toggleOnboardingAction } from '../
 
 export default async function Settings() {
   const ctx = await requireCtx();
+  const invites = await prisma.invitation.findMany({ where: { orgId: ctx.org.id, acceptedAt: null }, orderBy: { createdAt: 'desc' } });
   const members = await prisma.membership.findMany({ where: { orgId: ctx.org.id }, include: { user: true } });
   let items = await prisma.onboardingItem.findMany({ where: { orgId: ctx.org.id }, orderBy: { ord: 'asc' } });
   if (items.length === 0) {
@@ -43,7 +44,22 @@ export default async function Settings() {
             </select></div>
           <button className="btn-gold text-xs">Invite</button>
         </form>
-        <p className="text-xs text-zinc-400 mt-2">Email delivery is BLOCKED (no provider). The invite creates the account with a temporary password that you share manually until email is connected.</p>
+        <p className="text-xs text-zinc-400 mt-2">Invites create a personal activation link (valid 7 days) — share it on WhatsApp or email. {process.env.RESEND_API_KEY ? 'Email delivery is live.' : 'Connect an email key on Integrations and invites also send by email automatically.'}</p>
+        {invites.length > 0 && (
+          <div className="mt-3 space-y-1 text-xs">
+            <div className="font-medium text-zinc-500">Pending invitations:</div>
+            {invites.map(inv => {
+              const url = `${process.env.APP_URL || 'http://localhost:3000'}/accept-invite?token=${inv.token}`;
+              return (
+                <div key={inv.id} className="flex items-center gap-2 flex-wrap">
+                  <span className="text-zinc-600">{inv.email} ({inv.role.replace('_', ' ')})</span>
+                  <a href={url} className="text-blue-700 hover:underline break-all">{url}</a>
+                  <a href={`https://wa.me/?text=${encodeURIComponent(`You're invited to ${ctx.org.name} — activate your account: ${url}`)}`} target="_blank" rel="noreferrer" className="text-emerald-700 hover:underline">Share on WhatsApp ↗</a>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className="card">
         <h2 className="font-semibold mb-2">Onboarding checklist</h2>

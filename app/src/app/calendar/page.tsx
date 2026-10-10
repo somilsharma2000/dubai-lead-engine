@@ -28,15 +28,17 @@ export default async function CalendarPage({ searchParams }: { searchParams: { e
       <div className="card !p-0">
         {apts.length === 0 ? <div className="p-10 text-center text-sm text-zinc-500">No upcoming viewings.</div> : (
           <table className="w-full">
-            <thead><tr><th className="th">When</th><th className="th">Status</th><th className="th">Notes</th><th className="th">Actions</th></tr></thead>
+            <thead><tr><th className="th">When</th><th className="th">Status</th><th className="th">Notes</th><th className="th">Calendar</th><th className="th">Actions</th></tr></thead>
             <tbody>
               {apts.map(a => (
                 <tr key={a.id} className="hover:bg-zinc-50">
                   <td className="td">{a.startsAt.toISOString().slice(0, 16).replace('T', ' ')} UTC</td>
                   <td className="td"><span className="badge bg-blue-50 text-blue-800">{a.status}</span></td>
                   <td className="td">{a.notes || '—'}</td>
-                  <td className="td space-x-1">
-                    <form action={setAppointmentStatusAction} className="inline-flex gap-1">
+                  <td className="td space-x-1 whitespace-nowrap">
+                    <a href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Property viewing ' + (a.leadId ? '' : '') + (a.notes || ''))}&dates=${a.startsAt.toISOString().replace(/[-:]|\.\d{3}/g, '')}/${a.endsAt.toISOString().replace(/[-:]|\.\d{3}/g, '')}&details=${encodeURIComponent(a.notes || '')}`} target="_blank" rel="noreferrer" className="text-xs text-blue-700 hover:underline">Google ↗</a>
+                    <a href={`/api/appointments/${a.id}/ics`} className="text-xs text-blue-700 hover:underline">.ics</a>
+                    <form action={setAppointmentStatusAction} className="inline-flex gap-1 ml-2">
                       <input type="hidden" name="aptId" value={a.id} />
                       <button name="status" value="CONFIRMED" className="btn-ghost text-xs">Confirm</button>
                       <button name="status" value="NO_SHOW" className="btn-ghost text-xs">No-show</button>

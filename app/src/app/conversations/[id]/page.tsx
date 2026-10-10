@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/db';
+import { waLink, cloudConfigured } from '@/lib/whatsapp';
+import { aiConfigured } from '@/lib/ai';
 import { requireCtx } from '@/auth';
 import { sendManualMessageAction, draftReplyAction, approveMessageAction, toggleBotAction } from '../../actions';
 
@@ -35,7 +37,10 @@ export default async function Thread({ params }: { params: { id: string } }) {
             <div className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${m.direction === 'OUT' ? 'bg-amber-50 border border-amber-200' : 'bg-zinc-100'}`}>
               {m.status === 'APPROVAL_PENDING' && <span className="badge bg-amber-100 text-amber-800 block mb-1 w-max">{m.source === 'RULE_DRAFT' ? 'Rule-based draft — needs your approval' : 'DRAFT'}</span>}
               <p>{m.body}</p>
-              <p className="text-[10px] text-zinc-400 mt-1">{m.createdAt.toISOString().slice(0, 16).replace('T', ' ')} · {m.source}{m.status === 'SENT' ? ' · sent (delivery BLOCKED until WhatsApp connects)' : ''}</p>
+              <p className="text-[10px] text-zinc-400 mt-1">{m.createdAt.toISOString().slice(0, 16).replace('T', ' ')} · {m.source}{m.status === 'SENT' ? ' · sent' : ''}</p>
+              {m.status === 'SENT' && lead.phone && (
+                <a href={waLink(lead.phone, m.body)} target="_blank" rel="noreferrer" className="inline-block mt-1 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5 hover:bg-emerald-100">Open in WhatsApp ↗</a>
+              )}
               {m.status === 'APPROVAL_PENDING' && (
                 <form action={approveMessageAction} className="flex gap-2 mt-2">
                   <input type="hidden" name="messageId" value={m.id} />
@@ -58,7 +63,7 @@ export default async function Thread({ params }: { params: { id: string } }) {
         <input name="body" required disabled={blocked} placeholder={blocked ? 'Blocked: consent denied' : 'Write a message…'} className="input flex-1" />
         <button className="btn-gold text-xs" disabled={blocked}>Send</button>
       </form>
-      <p className="text-xs text-zinc-400">Drafts are rule-based (AI provider key not connected — status stays honest on the Integrations page). Delivery to WhatsApp is BLOCKED until credentials exist; approved messages are stored and queued.</p>
+      <p className="text-xs text-zinc-400">Drafts: {aiConfigured() ? 'AI-written (key connected)' : 'rule-based from your property records (connect an AI key on Integrations for LLM-written drafts)'} — every draft needs your approval. Delivery: one-tap WhatsApp link on every sent message{cloudConfigured() ? ' + auto-send via Cloud API (connected)' : ''}.</p>
     </div>
   );
 }

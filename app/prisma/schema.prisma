@@ -34,6 +34,7 @@ model Organization {
   appointments Appointment[]
   workflows  Workflow[]
   activities Activity[]
+  invitations Invitation[]
 }
 
 model Membership {
@@ -248,6 +249,18 @@ model Campaign {
   scheduledFor DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model Invitation {
+  id        String    @id @default(cuid())
+  orgId     String
+  email     String
+  role      String    @default("AGENCY_MEMBER")
+  token     String    @unique
+  expiresAt DateTime
+  acceptedAt DateTime?
+  createdAt DateTime  @default(now())
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model OnboardingItem {

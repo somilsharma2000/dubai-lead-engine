@@ -14,7 +14,7 @@ export default async function Conversations() {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <h1 className="text-2xl font-semibold">Conversations</h1>
-          <p className="text-sm text-zinc-500">AI replies are drafted from your property records only. WhatsApp connection: BLOCKED (no credentials) — drafts are prepared here for approval.</p>
+          <p className="text-sm text-zinc-500">AI replies are drafted from your property records, then approved by you. Delivery: one-tap WhatsApp link per message (Cloud API auto-send activates when credentials are added).</p>
         </div>
       </div>
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">

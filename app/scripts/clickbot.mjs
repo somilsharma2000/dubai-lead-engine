@@ -1,6 +1,6 @@
 // CLICKBOT v2 — discovers each form's action ID from the rendered page (like a real
 // browser does), submits the exact fields the real form uses, verifies the DB changed.
-const BASE = process.env.APP_URL || 'http://localhost:3000';
+const BASE = 'http://localhost:3000';
 let pass = 0, fail = 0;
 const t = (n, ok, x = '') => { console.log(`${ok ? 'PASS' : 'FAIL '}  ${n}${x ? ' — ' + x : ''}`); ok ? pass++ : fail++; };
 
@@ -45,7 +45,7 @@ if (doneForm) {
   const tid = byTitle ? byTitle[1] : taskId;
   r = await submit('/tasks', doneForm, { taskId: tid });
   html = await pageHTML('/tasks');
-  t('2. Done button completes task', r.status < 500 && !html.includes('V2 follow-up task') || (html.match(/line-through|DONE|done/g) || []).length > 0, `status=${r.status}`);
+  t('2. Done button completes task', r.status < 500 && (html.includes('Recently completed') && /Recently completed[\s\S]{0,400}?V2 follow-up task/.test(html)), `status=${r.status}`);
 } else t('2. Done button form missing', false);
 
 // 3. CALENDAR: Book viewing

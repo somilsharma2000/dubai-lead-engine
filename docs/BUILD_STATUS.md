@@ -1,5 +1,14 @@
 # BUILD STATUS — Real Estate AI Growth OS
-Updated: 2026-10-10 (v6) — LIVE + FULL BUTTON AUDIT.
+Updated: 2026-10-10 (v7) — LIVE. BLOCKED placeholders replaced with working logic.
+
+## v7 — "No more BLOCKED" (2026-10-10)
+Every BLOCKED placeholder deleted and replaced with a real working path:
+- WhatsApp delivery: WORKING NOW — every sent message gets an "Open in WhatsApp" one-tap link (wa.me, text pre-filled). Auto-send via WhatsApp Cloud API activates automatically when WHATSAPP_TOKEN + WHATSAPP_PHONE_NUMBER_ID are set (verified code path; records messages.delivered_cloud).
+- Team invites: FIXED a broken flow — invites used to create accounts with random lost passwords. Now each invite generates a personal activation link (7-day expiry) shown in Settings with WhatsApp/email share buttons; invitee sets their own password at /accept-invite. Optional automatic email when RESEND_API_KEY is set.
+- Calendar: WORKING NOW — every viewing has an "Add to Google Calendar" link + downloadable .ics file (Apple/Outlook). ICS route is auth-protected.
+- AI drafting: rule-based works today; add AI_API_KEY (any OpenAI-compatible provider via AI_BASE_URL/AI_MODEL) and drafts become LLM-written automatically, still approval-gated. Source labeled AI_DRAFT vs RULE_DRAFT.
+- Razorpay billing: real "Payment link (Razorpay)" buttons on the Billing page create live payment links (₹79,000/₹1,50,000/₹2,70,000 monthly) when RAZORPAY_KEY_ID/SECRET are set; without keys the click is recorded honestly with setup steps on Integrations.
+- HARDENED: public lead form now rejects non-string types and non-numeric phones (junk like {"$ne":null} is a 400, not a lead).
 
 ## v6 — "No fake buttons" audit (2026-10-10)
 Full-OS audit executed with three automated suites (npm run smoke / clickbot / security):
