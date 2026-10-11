@@ -1,15 +1,126 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { @apply bg-zinc-50 text-zinc-900 antialiased; font-family: system-ui, -apple-system, sans-serif; }
-.card { @apply bg-white border border-zinc-200 rounded-lg p-5 shadow-sm; }
-.btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors; }
-.btn-gold { @apply btn bg-amber-700 text-white hover:bg-amber-800; }
-.btn-ghost { @apply btn border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-100; }
-.input { @apply w-full rounded-md border border-zinc-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-700/40; }
-.label { @apply block text-xs font-medium text-zinc-600 mb-1; }
-.th { @apply text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide px-3 py-2; }
-.td { @apply px-3 py-2.5 text-sm border-t border-zinc-100; }
+
+/* ─── DESIGN TOKENS — Garuda Growth OS glassmorphic system ───
+   Surface: Soft Ice Gray #F8FAFC · Brand: Deep Forest #0A5C36
+   Energy: Electric Mint #00E699 · Glass: blur(16px) white 75% */
+
+:root {
+  --ice: #F8FAFC;
+  --forest: #0A5C36;
+  --forest-deep: #064E3B;
+  --mint: #00E699;
+  --mint-soft: rgba(0, 230, 153, 0.08);
+  --body: #475569;
+  --glass: rgba(255, 255, 255, 0.75);
+  --hairline: rgba(0, 0, 0, 0.06);
+  --r-lg: 20px;
+}
+
+body {
+  @apply text-slate-700 antialiased;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  color: var(--body);
+  background-color: var(--ice);
+  /* ambient radial glow spots */
+  background-image:
+    radial-gradient(640px circle at 12% 8%, var(--mint-soft), transparent 55%),
+    radial-gradient(720px circle at 88% 78%, rgba(10, 92, 54, 0.05), transparent 55%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ─── SURFACES ─── */
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  @apply p-5 shadow-[0_8px_30px_rgba(15,23,42,0.06)];
+}
+.glass-bar {
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* ─── BUTTONS — hover-lift physics ─── */
+.btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200; }
+.btn-gold {
+  background: var(--forest);
+  color: #fff;
+  @apply shadow-[0_4px_14px_rgba(10,92,54,0.35)];
+}
+.btn-gold:hover {
+  background: var(--forest-deep);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 22px rgba(0, 230, 153, 0.28);
+}
+.btn-ghost { @apply btn border bg-white/70 text-slate-700 hover:bg-white; border-color: rgba(0,0,0,0.08); backdrop-filter: blur(10px); }
+.btn-ghost:hover { transform: translateY(-1px); }
+.btn-mint { @apply btn font-semibold text-white; background: linear-gradient(135deg, #00E699, #059669); box-shadow: 0 4px 16px rgba(0,230,153,0.4); }
+.btn-mint:hover { transform: translateY(-2px) scale(1.01); }
+
+/* ─── FORMS ─── */
+.input { @apply w-full rounded-xl px-3 py-2.5 text-sm bg-white/80; border: 1px solid rgba(0,0,0,0.08); transition: border 0.2s, box-shadow 0.2s; }
+.input:focus { outline: none; border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,230,153,0.18); }
+.label { @apply block text-xs font-medium text-slate-500 mb-1; }
+
+/* ─── TABLES / BADGES / NAV ─── */
+.th { @apply text-left text-xs font-semibold uppercase tracking-wide px-3 py-2; color: #64748B; }
+.td { @apply px-3 py-2.5 text-sm; border-top: 1px solid rgba(0,0,0,0.05); }
 .badge { @apply inline-flex rounded-full px-2 py-0.5 text-xs font-medium; }
-.navlink { @apply block rounded-md px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900; }
-.navlink-active { @apply bg-amber-50 text-amber-900 font-medium; }
+.navlink { @apply block rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-white/70 hover:text-slate-900 transition-colors; }
+.navlink-active { background: var(--mint-soft); color: var(--forest); font-weight: 600; }
+
+/* ─── NAV PILLS (marketing) ─── */
+.pill { @apply rounded-full px-4 py-1.5 text-sm font-medium text-slate-600 transition-all; }
+.pill:hover { background: rgba(0, 230, 153, 0.10); color: var(--forest); }
+.pill-active { background: var(--mint-soft); color: var(--forest); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(0,230,153,0.3); }
+
+/* ─── MASCOT PHYSICS ─── */
+@keyframes mascotFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes mascotWave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-14deg); } }
+@keyframes pulseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@keyframes floatBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.mascot { animation: mascotFloat 4s ease-in-out infinite; filter: drop-shadow(0 12px 24px rgba(15, 23, 42, 0.10)); }
+.mascot-hover { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.mascot-hover:hover { transform: translateY(-16px) rotate(4deg); }
+.mascot-wave { animation: mascotWave 1.8s ease-in-out infinite; transform-origin: 60% 80%; }
+.glow-pulse { animation: pulseGlow 2.2s ease-in-out infinite; }
+.float-badge { animation: floatBadge 3.5s ease-in-out infinite; }
+
+/* status pulse dot */
+.mint-dot { background: var(--mint); border-radius: 9999px; box-shadow: 0 0 0 0 rgba(0,230,153,0.6); animation: dotPulse 2s infinite; }
+@keyframes dotPulse { 0% { box-shadow: 0 0 0 0 rgba(0,230,153,0.55); } 70% { box-shadow: 0 0 0 10px rgba(0,230,153,0); } 100% { box-shadow: 0 0 0 0 rgba(0,230,153,0); } }
+
+/* hero container — mascot breaks the top-right bounding box (z-20) */
+.hero-shell { position: relative; border-radius: 28px; }
+.hero-mascot { position: absolute; top: -56px; right: 24px; z-index: 20; }
+@media (max-width: 1023px) { .hero-mascot { top: -40px; right: 8px; } }
+
+/* floating glass badges overlap card edges at 15% offset */
+.hero-badge { position: absolute; background: var(--glass); backdrop-filter: blur(16px); border: 1px solid var(--hairline); border-radius: 14px; padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--forest); box-shadow: 0 10px 26px rgba(15,23,42,0.10); }
+.hero-badge-1 { bottom: -18px; left: -18px; }
+.hero-badge-2 { bottom: 34px; right: -22px; }
+
+/* micro-sticker inside feature cards: sits in adjacent negative space */
+.feature-sticker { position: absolute; top: -30px; right: -12px; z-index: 10; }
+
+/* problem-section mascot lives in negative space above the card grid */
+.sweep-slot { position: absolute; bottom: 100%; right: 4%; margin-bottom: -70px; z-index: 10; }
+
+/* CTA bar peeking mascot */
+.cta-peek { position: absolute; bottom: -54px; left: 40px; z-index: 20; }
+
+/* scrollbar restraint */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }

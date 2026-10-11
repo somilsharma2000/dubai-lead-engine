@@ -20,14 +20,14 @@ export default async function Login({ searchParams }: { searchParams: { error?: 
           <div><label className="label">Email</label><input name="email" type="email" required className="input" /></div>
           <div><label className="label">Password</label><input name="password" type="password" required className="input" /></div>
           <button className="btn-gold w-full">Sign in</button>
-          <p className="text-xs text-center text-zinc-500">No account? <a href="/signup" className="text-amber-800 underline">Create one</a></p>
+          <p className="text-xs text-center text-zinc-500">No account? <a href="/signup" className="text-emerald-900 underline">Create one</a></p>
         </form>
         <div className="my-4 flex items-center gap-3 text-xs text-zinc-400"><div className="h-px bg-zinc-200 flex-1"></div>or<div className="h-px bg-zinc-200 flex-1"></div></div>
         <form action={demoLoginAction}>
           <button className="btn-ghost w-full !py-3 !text-sm font-medium">▶ &nbsp;Try the live client demo — no login needed</button>
         </form>
         <p className="text-xs text-center text-zinc-400 mt-2">Opens a full workspace with demo data. Real software, synthetic leads.</p>
-        <p className="text-[10px] text-center text-zinc-400 mt-4">By signing in you agree to our <a href="/legal/terms" className="underline hover:text-amber-700">Terms</a> · <a href="/legal/privacy" className="underline hover:text-amber-700">Privacy</a> · <a href="/legal/refund" className="underline hover:text-amber-700">Refund policy</a></p>
+        <p className="text-[10px] text-center text-zinc-400 mt-4">By signing in you agree to our <a href="/legal/terms" className="underline hover:text-emerald-800">Terms</a> · <a href="/legal/privacy" className="underline hover:text-emerald-800">Privacy</a> · <a href="/legal/refund" className="underline hover:text-emerald-800">Refund policy</a></p>
       </div>
     </div>
   );

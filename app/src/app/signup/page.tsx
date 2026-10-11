@@ -26,9 +26,9 @@ export default async function Signup() {
             <div><label className="label">Currency</label><input name="currency" defaultValue="USD" maxLength={3} className="input" /></div>
           </div>
           <button className="btn-gold w-full">Create workspace</button>
-          <p className="text-xs text-center text-zinc-500">Have an account? <a href="/login" className="text-amber-800 underline">Sign in</a></p>
+          <p className="text-xs text-center text-zinc-500">Have an account? <a href="/login" className="text-emerald-900 underline">Sign in</a></p>
         </form>
-        <p className="text-[10px] text-center text-zinc-400 mt-4">Creating an account means you agree to our <a href="/legal/terms" className="underline hover:text-amber-700">Terms</a> · <a href="/legal/privacy" className="underline hover:text-amber-700">Privacy</a> · <a href="/legal/refund" className="underline hover:text-amber-700">Refund policy</a></p>
+        <p className="text-[10px] text-center text-zinc-400 mt-4">Creating an account means you agree to our <a href="/legal/terms" className="underline hover:text-emerald-800">Terms</a> · <a href="/legal/privacy" className="underline hover:text-emerald-800">Privacy</a> · <a href="/legal/refund" className="underline hover:text-emerald-800">Refund policy</a></p>
       </div>
     </div>
   );

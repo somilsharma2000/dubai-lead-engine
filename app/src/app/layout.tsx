@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
+import { Outfit, Inter } from 'next/font/google';
 import './globals.css';
+
+const fontDisplay = Outfit({ subsets: ['latin'], variable: '--font-display', weight: ['500', '700', '800'] });
+const fontInter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 import { getCtx } from '@/server/auth';
 import { logoutAction, resetDemoAction } from './actions';
 import Link from 'next/link';
@@ -27,9 +31,9 @@ const NAV_GROUPS = [
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getCtx();
-  if (!ctx) return <html lang="en"><body><div className="min-h-screen">{children}</div></body></html>;
+  if (!ctx) return <html lang="en"><body className={`${fontDisplay.variable} ${fontInter.variable}`}><div className="min-h-screen">{children}</div></body></html>;
   return (
-    <html lang="en"><body>
+    <html lang="en"><body className={`${fontDisplay.variable} ${fontInter.variable}`}>
       <div className="min-h-screen flex">
         <aside className="w-56 shrink-0 border-r border-zinc-200 bg-white hidden md:flex flex-col">
           <div className="px-4 py-5 border-b border-zinc-100">
@@ -58,15 +62,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="p-3 border-t border-zinc-100 text-xs text-zinc-500">
             <div className="font-medium text-zinc-700 truncate">{ctx.user.name}</div>
             <div className="truncate">{ctx.user.email}</div>
-            <form action={logoutAction}><button className="mt-2 text-amber-800 hover:underline">Sign out</button></form>
+            <form action={logoutAction}><button className="mt-2 text-emerald-900 hover:underline">Sign out</button></form>
           </div>
         </aside>
         <main className="flex-1 min-w-0">
           {ctx.org?.slug === 'demo-prime-realty' && (
-            <div className="bg-amber-100 border-b border-amber-300 px-6 py-2 flex flex-wrap items-center gap-3 text-sm">
-              <span className="font-semibold text-amber-900">DEMO WORKSPACE</span>
-              <span className="text-amber-800">This is what your clients see — everything works, data is synthetic.</span>
-              <form action={resetDemoAction}><button className="text-amber-900 underline font-medium">Reset demo data</button></form>
+            <div className="bg-emerald-100 border-b border-emerald-300 px-6 py-2 flex flex-wrap items-center gap-3 text-sm">
+              <span className="font-semibold text-emerald-900">DEMO WORKSPACE</span>
+              <span className="text-emerald-900">This is what your clients see — everything works, data is synthetic.</span>
+              <form action={resetDemoAction}><button className="text-emerald-900 underline font-medium">Reset demo data</button></form>
             </div>
           )}
           <div className="max-w-6xl mx-auto p-6 md:p-8">{children}</div>

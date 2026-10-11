@@ -1,0 +1,18 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const p = await b.newPage();
+await p.setViewport({ width: 1440, height: 950 });
+await p.goto('http://localhost:3000/', { waitUntil: 'networkidle0', timeout: 20000 });
+await new Promise(r => setTimeout(r, 1000));
+await p.screenshot({ path: '/tmp/land-1.png' });
+await p.evaluate(() => window.scrollTo(0, 1150));
+await new Promise(r => setTimeout(r, 900));
+await p.screenshot({ path: '/tmp/land-2.png' });
+await p.evaluate(() => window.scrollTo(0, 2400));
+await new Promise(r => setTimeout(r, 900));
+await p.screenshot({ path: '/tmp/land-3.png' });
+await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight - 950));
+await new Promise(r => setTimeout(r, 900));
+await p.screenshot({ path: '/tmp/land-4.png' });
+await b.close();
+console.log('done');
