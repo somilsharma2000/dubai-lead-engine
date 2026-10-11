@@ -18,10 +18,12 @@ export function verifyPassword(pw: string, hash: string) { return bcrypt.compare
 export function adminEmails(): string[] { return config.admin.emails; }
 
 export async function createSession(userId: string) {
+  // opportunistic sweep on login: purge expired sessions (keeps the table small, no per-request cost)
+  void prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => {});
   const token = randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 7 * 24 * 3600 * 1000);
   await prisma.session.create({ data: { token, userId, expiresAt } });
-  (await cookies()).set(SESSION_COOKIE, token, { httpOnly: true, sameSite: 'lax', path: '/', expires: expiresAt });
+  (await cookies()).set(SESSION_COOKIE, token, { httpOnly: true, sameSite: 'lax', secure: config.app.isProd, path: '/', expires: expiresAt });
   return token;
 }
 
