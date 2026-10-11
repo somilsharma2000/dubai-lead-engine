@@ -258,3 +258,50 @@ export function StickerBell({ size = 96, className = '' }: { size?: number; clas
     </S>
   );
 }
+
+// ─── GARU — workflow pose (integrations & ecosystem: juggling orbiting app icons)
+export function GaruJuggle({ size = 200, className = '' }: { size?: number; className?: string }) {
+  return (
+    <S size={size} className={`mascot ${className}`}>
+      {DEFS}
+      <ellipse cx="110" cy="204" rx="48" ry="8" fill="#0F172A" opacity="0.10" filter="url(#soft)" />
+      {/* orbit ring */}
+      <ellipse cx="110" cy="96" rx="86" ry="26" fill="none" stroke="url(#mintGlow)" strokeWidth="2" opacity="0.5" strokeDasharray="6 8" />
+      {/* orbiting app bubbles */}
+      <g className="mascot-orbit-slow">
+        <g transform="translate(30 88)">
+          <rect x="-14" y="-12" width="28" height="24" rx="7" fill="url(#ceramic)" stroke="#CBD5E1" strokeWidth="1.5" />
+          <path d="M-8 0h16M-8 6h10" stroke="#00E699" strokeWidth="2" strokeLinecap="round" />
+        </g>
+      </g>
+      <g transform="translate(186 82)">
+        <circle r="14" fill="url(#ceramic)" stroke="#CBD5E1" strokeWidth="1.5" />
+        <path d="M-6-2h12M-6 3h7" stroke="#0A5C36" strokeWidth="2" strokeLinecap="round" />
+      </g>
+      <g transform="translate(156 58)">
+        <path d="M-13 2l8-10 5 6 8-9-3 12z" fill="url(#mintGlow)" stroke="#059669" strokeWidth="1" />
+      </g>
+      <g transform="translate(58 52)">
+        <circle r="6" fill="url(#mintGlow)" filter="url(#glow)" />
+        <circle cx="9" cy="-7" r="4" fill="#00E699" opacity="0.6" />
+      </g>
+      {/* Garu body — same model, energetic float, both wings raised */}
+      <path d="M110 66c-28 0-44 22-44 54 0 34 18 56 44 56s44-22 44-56c0-32-16-54-44-54z" fill="url(#ceramic)" stroke="#CBD5E1" strokeWidth="1.5" />
+      <ellipse cx="92" cy="92" rx="18" ry="8" fill="#FFFFFF" opacity="0.7" transform="rotate(-18 92 92)" />
+      {/* raised wings (juggling) */}
+      <path d="M70 118c-16-8-24-22-20-34 12 2 24 12 30 24z" fill="url(#ceramic)" stroke="#CBD5E1" strokeWidth="1.5" />
+      <path d="M150 118c16-8 24-22 20-34-12 2-24 12-30 24z" fill="url(#ceramic)" stroke="#CBD5E1" strokeWidth="1.5" />
+      {/* eyes — happy */}
+      <circle cx="94" cy="102" r="24" fill="url(#mintHalo)" opacity="0.3" /><circle cx="126" cy="102" r="24" fill="url(#mintHalo)" opacity="0.3" />
+      <ellipse cx="94" cy="102" rx="8" ry="10" fill="#0B1220" /><ellipse cx="126" cy="102" rx="8" ry="10" fill="#0B1220" />
+      <ellipse cx="94" cy="102" rx="5.5" ry="7" fill="url(#mintGlow)" filter="url(#glow)" /><ellipse cx="126" cy="102" rx="5.5" ry="7" fill="url(#mintGlow)" filter="url(#glow)" />
+      <path d="M86 88q8-5 14-2M120 86q8-4 14 0" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="96" cy="98" r="1.8" fill="#FFFFFF" /><circle cx="128" cy="98" r="1.8" fill="#FFFFFF" />
+      <path d="M104 116l12 0-6 10z" fill="url(#chrome)" />
+      {/* mint OS emblem on chest */}
+      <circle cx="110" cy="136" r="14" fill="none" stroke="url(#emerald)" strokeWidth="2" opacity="0.85" />
+      <circle cx="110" cy="136" r="6" fill="url(#mintGlow)" filter="url(#glow)" />
+      <ellipse cx="92" cy="180" rx="11" ry="5" fill="url(#chrome)" /><ellipse cx="128" cy="180" rx="11" ry="5" fill="url(#chrome)" />
+    </S>
+  );
+}
