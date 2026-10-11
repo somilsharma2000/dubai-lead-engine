@@ -17,3 +17,12 @@ export function computeLeadScore(lead: { intent?: string; source?: string; budge
   if (Date.now() - lead.createdAt.getTime() < 24 * 3600 * 1000) { score += 5; factors.push({ label: 'Fresh (<24h)', points: 5 }); }
   return { score: Math.max(0, Math.min(100, score)), factors };
 }
+
+// Blueprint bands (Real Estate Automation Service Blueprint, System 2).
+// Bands are mapped onto our 0-100 score: >=70 Hot, 40-69 Warm, <40 Nurture.
+export type ScoreBand = { label: 'Hot' | 'Warm' | 'Nurture'; action: string };
+export function scoreBand(score: number): ScoreBand {
+  if (score >= 70) return { label: 'Hot', action: 'Instant agent alert + call within 15 minutes' };
+  if (score >= 40) return { label: 'Warm', action: 'Automated follow-up + agent task same day' };
+  return { label: 'Nurture', action: 'Add to nurture sequence; re-check in 30 days' };
+}

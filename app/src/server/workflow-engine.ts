@@ -26,6 +26,39 @@ export const DEFAULT_WORKFLOWS = [
     }
   },
   {
+    name: 'Day 1 follow-up: helpful question or listing',
+    trigger: 'LEAD_CREATED',
+    config: { conditions: {}, actions: [
+      { type: 'CREATE_TASK', title: 'Day 1: send a helpful question or a relevant listing (stop if lead replied)', kind: 'FOLLOWUP', dueInHours: 24 }, { type: 'LOG' } ] }
+  },
+  {
+    name: 'Day 3 follow-up: alternative property / timing check',
+    trigger: 'LEAD_CREATED',
+    config: { conditions: {}, actions: [
+      { type: 'CREATE_TASK', title: 'Day 3: share an alternative property or check timing (stop if lead replied)', kind: 'FOLLOWUP', dueInHours: 72 }, { type: 'LOG' } ] }
+  },
+  {
+    name: 'Day 7 follow-up: soft close',
+    trigger: 'LEAD_CREATED',
+    config: { conditions: {}, actions: [
+      { type: 'CREATE_TASK', title: 'Day 7: soft close, ask for updated preferences, then stop chasing', kind: 'FOLLOWUP', dueInHours: 168 }, { type: 'LOG' } ] }
+  },
+  {
+    name: 'Visit booked: confirmation + 24h and 2h reminders',
+    trigger: 'LEAD_STAGE_CHANGED',
+    config: { conditions: { stage: 'VIEWING' }, actions: [
+      { type: 'CREATE_TASK', title: 'Send visit confirmation (address, map link, agent name)', kind: 'VIEWING', dueInHours: 1 },
+      { type: 'CREATE_TASK', title: 'Send 24h reminder with reschedule link', kind: 'VIEWING', dueInHours: 24 },
+      { type: 'CREATE_TASK', title: 'Send 2h reminder with agent contact', kind: 'VIEWING', dueInHours: 46 },
+      { type: 'LOG' } ] }
+  },
+  {
+    name: 'Lost lead → 30-day reactivation check-in',
+    trigger: 'LEAD_STAGE_CHANGED',
+    config: { conditions: { stage: 'LOST' }, actions: [
+      { type: 'CREATE_TASK', title: 'Reactivation: ask if requirements changed (only opted-in leads; reason required)', kind: 'FOLLOWUP', dueInHours: 720 }, { type: 'LOG' } ] }
+  },
+  {
     name: 'Deal won → review + referral ask',
     trigger: 'LEAD_STAGE_CHANGED',
     config: {
@@ -38,8 +71,12 @@ export const DEFAULT_WORKFLOWS = [
   }
 ];
 
+// Idempotent: creates only the defaults an org is missing (matched by name), so
+// existing orgs pick up new blueprint workflows without duplicates or overwrites.
 export async function seedDefaultWorkflows(orgId: string) {
+  const have = new Set((await prisma.workflow.findMany({ where: { orgId }, select: { name: true } })).map(w => w.name));
   for (const w of DEFAULT_WORKFLOWS) {
+    if (have.has(w.name)) continue;
     await prisma.workflow.create({ data: { orgId, name: w.name, trigger: w.trigger, config: JSON.stringify(w.config) } });
   }
 }

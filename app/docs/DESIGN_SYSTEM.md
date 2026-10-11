@@ -96,3 +96,15 @@ Stage 1-3 of the v3 pipeline (persona, single-model multi-pose kit, vector stick
 ## Verification
 - `tools/dev/physics-check.mjs`: **10/10 PASS** — fixed z-99, glide + 32px clearance at all 5 anchors, cursor parallax, click jump, mobile fallback, zero JS errors.
 - `layout-check.mjs` v2: **14/14 PASS**. Full regression: **81/81 green** (44 smoke + 13 security + 24 features).
+
+---
+
+# Blueprint integration (2026-10-11): Real Estate Automation Service Blueprint
+Source: user-supplied PDF (GrowUp With Aryan). Mapped onto the existing OS rather than rebuilt:
+- Pipeline, consent field, scoring, public capture form, calendar: already present.
+- NEW `scoreBand()` (Hot 70+ / Warm 40-69 / Nurture <40) with the blueprint's actions.
+- NEW workflows: Day 1/3/7 follow-up tasks, visit confirmation + 24h + 2h reminders, 30-day reactivation check-in. All create agent tasks (human sends), consistent with the approve-before-send rule.
+- NEW `/playbook`: offer, score bands, 9 templates, objections, 10 discovery questions, 48h demo plan, 7-day delivery, compliance checklist.
+- `seedDefaultWorkflows` is now idempotent (tops up by name); existing orgs get new defaults on visiting /workflows.
+- Adapted: the blueprint's "free 7-day test" objection reply became a free 48h sample (project rule: no free trial).
+- `scripts/blueprint.mjs`: 10 live-behaviour checks (workflows fire on real events, cleanup included).

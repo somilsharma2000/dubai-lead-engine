@@ -63,7 +63,7 @@ export async function ensureDemoWorkspace() {
   if (!await prisma.membership.findFirst({ where: { userId: user.id, orgId: org.id } })) {
     await prisma.membership.create({ data: { userId: user.id, orgId: org.id, role: 'OWNER' } });
   }
-  if (await prisma.workflow.count({ where: { orgId: org.id } }) === 0) await seedDefaultWorkflows(org.id);
+  await seedDefaultWorkflows(org.id);
   if (await prisma.lead.count({ where: { orgId: org.id } }) === 0) await seedDemoData(org.id);
   return { user, org };
 }

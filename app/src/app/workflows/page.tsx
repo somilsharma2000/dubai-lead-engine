@@ -1,9 +1,11 @@
 import { prisma } from '@/server/db';
 import { requirePerm } from '@/server/auth';
 import { toggleWorkflowAction, retryRunAction } from '../actions';
+import { seedDefaultWorkflows } from '@/server/workflow-engine';
 
 export default async function Workflows() {
   const ctx = await requirePerm('workflows.manage');
+  await seedDefaultWorkflows(ctx.org.id); // top up any new blueprint defaults (idempotent)
   const [workflows, runs, failed] = await Promise.all([
     prisma.workflow.findMany({ where: { orgId: ctx.org.id }, include: { runs: { orderBy: { createdAt: 'desc' }, take: 3 } } }),
     prisma.workflowRun.findMany({ where: { orgId: ctx.org.id }, orderBy: { createdAt: 'desc' }, take: 25, include: { workflow: true } }),

@@ -24,6 +24,7 @@ const NAV_GROUPS = [
     { href: '/workflows', label: 'Workflows' }] },
   { label: 'Business', items: [
     { href: '/reports', label: 'Reports' },
+    { href: '/playbook', label: 'Playbook' },
     { href: '/integrations', label: 'Integrations' },
     { href: '/billing', label: 'Billing' },
     { href: '/settings', label: 'Settings' }] }
