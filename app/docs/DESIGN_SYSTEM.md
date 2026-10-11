@@ -75,3 +75,24 @@ EXACTLY ONE character model — Garu — across every section, varying only pose
 ## Verification (all executed)
 - `tools/dev/layout-check.mjs` v2: **14/14 PASS** — bounding-box overlap, 4 mascot instances, badgeGlow applied, 1-sticker-per-card across 13 cards, hover fires `mascotJump`, random engine fires within 7s, no overflow, no JS errors.
 - Full regression: 44 smoke + 13 security + 24 features = **81/81 green** post-upgrade.
+
+---
+
+# v3 — 4-Stage Mascot Engine: Scroll & Cursor Physics (2026-10-11)
+Stage 1-3 of the v3 pipeline (persona, single-model multi-pose kit, vector sticker matrix) were already satisfied by v1/v2. New deltas shipped:
+
+## Stage 4 — Dynamic scroll-targeting & interactive cursor physics
+- `MascotCompanion.tsx` (GSAP + ScrollTrigger, client component): fixed 130px guide instance glides between 5 section anchors (`power2.out`, 1.4s, overwrite auto), follows the cursor with ±15px parallax, and plays a jump-and-spin timeline on click (bounce.out).
+- Anchor coordinates were tuned against measured DOM text geometry — every parked position keeps **59-84px clearance** from headlines/body text (spec floor: 32px), sitting strictly in side margins / card-border negative space.
+- `prefers-reduced-motion` note: engine requires pointer + non-mobile viewport.
+
+## High-DPI pipeline (Stage 3 delivery standard)
+- All mascot/sticker assets remain **inline SVG** — infinite DPI, zero pixelation, no black-blob risk on Retina/4K. Raster WebP/Lottie renders queued behind integration-credit reset.
+- `.mascot-element-accel` / `.sticker-3d`: `translateZ(0)` GPU acceleration, `will-change: transform`, ambient `drop-shadow(0 16px 30px rgba(0,0,0,0.12))`, contrast-optimized rendering.
+
+## Stage 5 — Responsive fallback
+- <768px: companion locks bottom-right (16px inset, 80px), scroll/cursor engine disabled to preserve mobile real estate.
+
+## Verification
+- `tools/dev/physics-check.mjs`: **10/10 PASS** — fixed z-99, glide + 32px clearance at all 5 anchors, cursor parallax, click jump, mobile fallback, zero JS errors.
+- `layout-check.mjs` v2: **14/14 PASS**. Full regression: **81/81 green** (44 smoke + 13 security + 24 features).

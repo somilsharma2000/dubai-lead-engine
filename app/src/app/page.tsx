@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { getCtx } from '@/server/auth';
 import { GaruHero, GaruSweep, GaruPeek, GaruJuggle, StickerOS, StickerAI, StickerGrowth, StickerBroken, StickerClock, StickerBell } from '@/components/brand/Assets';
 import MascotBehaviors from '@/components/brand/MascotBehaviors';
+import MascotCompanion from '@/components/brand/MascotCompanion';
 import { demoLoginAction } from './page-actions';
 
 // ── honest plan copy, identical to /billing ──
@@ -50,6 +51,7 @@ export default async function Landing() {
   return (
     <div className="min-h-screen">
       <MascotBehaviors />
+      <MascotCompanion />
 
       {/* ── glass sticky navbar ── */}
       <header className="glass-bar sticky top-0 z-50">
@@ -71,7 +73,7 @@ export default async function Landing() {
       </header>
 
       {/* ── HERO — Mascot #1 anchored on top-right border of the preview card ── */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 pb-8 md:pt-24">
+      <section id="heroAnchor" className="max-w-6xl mx-auto px-6 pt-16 pb-8 md:pt-24">
         <div className="grid grid-cols-12 gap-8 items-center">
           <div className="col-span-12 lg:col-span-7">
             <div className="inline-flex items-center gap-2 glass-bar rounded-full px-3 py-1 mb-6" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
@@ -110,7 +112,7 @@ export default async function Landing() {
         <div className="grid grid-cols-12 gap-6">
           {METRICS.map((m, i) => (
             <div key={i} className="col-span-12 sm:col-span-6 xl:col-span-3 glass-card-3d rounded-[20px] relative overflow-visible">
-              <div className="feature-sticker"><m.icon size={84} /></div>
+              <div className="feature-sticker sticker-3d"><m.icon size={84} /></div>
               <div style={{ padding: '28px', paddingTop: '46px' }}>
                 <div className="display text-2xl font-extrabold text-slate-900">{m.big}</div>
                 <p className="text-sm mt-1">{m.label}</p>
@@ -121,7 +123,7 @@ export default async function Landing() {
       </section>
 
       {/* ── PROBLEMS — Mascot #2 sweeping away paperwork in negative space ── */}
-      <section className="max-w-6xl mx-auto px-6 py-24">
+      <section id="problemAnchor" className="max-w-6xl mx-auto px-6 py-24">
         <div className="relative">
           <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">The manual way is costing you deals</h2>
           <p className="text-lg mb-10 max-w-2xl">Agents do not lose to better listings. They lose to slower follow-up and scattered systems.</p>
@@ -129,7 +131,7 @@ export default async function Landing() {
           <div className="grid grid-cols-12 gap-6 mt-4">
             {PROBLEMS.map((p, i) => (
               <div key={i} className="col-span-12 md:col-span-4 card relative overflow-visible">
-                <div className="feature-sticker"><p.icon size={86} /></div>
+                <div className="feature-sticker sticker-3d"><p.icon size={86} /></div>
                 <div style={{ padding: '28px', paddingTop: '48px' }}>
                   <h3 className="font-bold text-lg text-slate-900 mb-2">{p.title}</h3>
                   <p className="text-sm">{p.body}</p>
@@ -141,7 +143,7 @@ export default async function Landing() {
       </section>
 
       {/* ── INTERACTIVE WORKFLOW PREVIEW — Mascot #3 juggling the ecosystem ── */}
-      <section id="workflow" className="max-w-6xl mx-auto px-6 py-24">
+      <section id="workflowAnchor" className="max-w-6xl mx-auto px-6 py-24">
         <div className="relative">
           <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">From enquiry to viewing to closing loop</h2>
           <p className="text-lg mb-10 max-w-2xl">Four steps, one system — every one of them is running in the live product right now.</p>
@@ -168,13 +170,13 @@ export default async function Landing() {
       </section>
 
       {/* ── FEATURES — 1 micro-sticker per card ── */}
-      <section id="features" className="max-w-6xl mx-auto px-6 py-24">
+      <section id="featureAnchor" className="max-w-6xl mx-auto px-6 py-24">
         <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">One system. Six engines.</h2>
         <p className="text-lg mb-10 max-w-2xl">Everything below is running in the live product right now — log into the demo and check.</p>
         <div className="grid grid-cols-12 gap-6">
           {FEATURES.map((f, i) => (
             <div key={i} className="col-span-12 md:col-span-6 xl:col-span-4 card relative overflow-visible">
-              <div className="feature-sticker"><f.icon size={86} /></div>
+              <div className="feature-sticker sticker-3d"><f.icon size={86} /></div>
               <div style={{ padding: '28px', paddingTop: '44px' }}>
                 <h3 className="font-bold text-lg text-slate-900 mb-2">{f.title}</h3>
                 <p className="text-sm">{f.body}</p>
@@ -185,7 +187,7 @@ export default async function Landing() {
       </section>
 
       {/* ── PRICING — identical copy to /billing ── */}
-      <section id="pricing" className="max-w-6xl mx-auto px-6 py-24">
+      <section id="pricingAnchor" className="max-w-6xl mx-auto px-6 py-24">
         <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Simple retainers. No lock-in.</h2>
         <p className="text-lg mb-10 max-w-2xl">Done-for-you growth packages, powered by the same OS you see in the demo. Paid monthly, cancel anytime.</p>
         <div className="grid grid-cols-12 gap-6">

@@ -23,7 +23,7 @@ const geo = await p.evaluate(() => {
     h1: box('h1'),
     pills: document.querySelectorAll('.pill').length,
     metricsCards: document.querySelectorAll('#product .glass-card-3d').length,
-    workflowCards: document.querySelectorAll('#workflow .card').length,
+    workflowCards: document.querySelectorAll('#workflowAnchor .card').length,
   };
 });
 let fails = 0;
